@@ -38,6 +38,7 @@
                         />
 
                     <ImageView
+                        android:id="@+id/main_toolbar_drop"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@+id/main_toolbar_title"
@@ -47,6 +48,7 @@
                         />
 
                     <ImageView
+                        android:id="@+id/main_toolbar_today"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"

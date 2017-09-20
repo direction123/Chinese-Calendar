@@ -3,14 +3,17 @@ package direction123.calendar;
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import direction123.calendar.R;
@@ -28,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     Toolbar mToolbar;
     TextView mTitleTextView;
+    ImageView mJumpToday;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +68,14 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, mFragment)
                 .commit();
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        FragmentManager fm = getSupportFragmentManager();
+        MonthFragment fragmentByID = (MonthFragment) fm.findFragmentById(fragment.getId());
+        mJumpToday.setOnClickListener(fragmentByID);
 
     }
 
@@ -103,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                 showDatePickerDialog();
             }
         });
-
+        mJumpToday= (ImageView) findViewById(R.id.main_toolbar_today);
     }
 
     public void setActionBarTitle(String title){

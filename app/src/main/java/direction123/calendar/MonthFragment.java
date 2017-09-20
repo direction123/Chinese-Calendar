@@ -1,6 +1,7 @@
 package direction123.calendar;
 
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -9,9 +10,11 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -31,7 +34,8 @@ import direction123.calendar.data.MonthContract;
 
 public class MonthFragment extends Fragment implements ViewPager.OnPageChangeListener,
         DayGridOnClickHandler,
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>,
+        View.OnClickListener {
     private static final String DAYS_ARGS = "daysArgs";
 
     @BindView(R.id.viewpager)
@@ -46,6 +50,9 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
     // ViewaPager
     private ViewPagerAdapter mViewPagerAdapter;
     private ViewPagerFragment mCurViewPagerFragment;
+
+    // Toolbar
+    private ImageView mJumpToday;
 
     private static final int ID_MONTH_LOADER = 33;
     private static final int ID_DAYS_LOADER = 34;
@@ -69,6 +76,8 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
         // Loader
         getActivity().getSupportLoaderManager().initLoader(ID_MONTH_LOADER, null, this);
 
+        // Toolbar jumpTpday
+        mJumpToday = (ImageView) ((MainActivity) getActivity()).findViewById(R.id.main_toolbar_today);
         return rootView;
     }
 
@@ -112,8 +121,10 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
                     int position;
                     if (dayGridAdapter.isCurMonth()) {
                         position = dayGridAdapter.getDayOfMonth();
+                        mJumpToday.setVisibility(View.INVISIBLE);
                     } else {
                         position = dayGridAdapter.get1stDayOfMonth();
+                        mJumpToday.setVisibility(View.VISIBLE);
                     }
                     displayBottomText(dayGridAdapter.getDayModels().get(position));
                 }
@@ -165,6 +176,11 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
     @Override
     public void onClick(DayModel dayModel) {
         displayBottomText(dayModel);
+    }
+
+    @Override
+    public void onClick(View v) {
+        mViewPager.setCurrentItem(getCurrentMonthId() - 1, false);
     }
 
     private void displayBottomText(DayModel dayModel) {
