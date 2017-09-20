@@ -21,9 +21,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
-public class MonthFragment extends Fragment {
+public class MonthFragment extends Fragment implements ViewPager.OnPageChangeListener {
     private static final String TAG = "MonthFragment";
 
     @BindView(R.id.viewpager)
@@ -53,11 +54,31 @@ public class MonthFragment extends Fragment {
         //ViewPager
         mViewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
         mViewPager.setAdapter(mViewPagerAdapter);
+        mViewPager.addOnPageChangeListener(this);
 
         //firebase
         loadAllDaysFromFirebase();
 
         return rootView;
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        ViewPagerFragment viewPagerFragment = (ViewPagerFragment) mViewPagerAdapter.getItem(position);
+        if (viewPagerFragment != null) {
+            String title = viewPagerFragment.getCurMonth() + " " + viewPagerFragment.getCurYear();
+            ((MainActivity) getActivity()).setActionBarTitle(title);
+        }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 
     private void loadAllDaysFromFirebase() {
@@ -85,7 +106,7 @@ public class MonthFragment extends Fragment {
                     mViewPagerFragments.add(ViewPagerFragment.newInstance(MonthId, Month, Year, daysInMonth));
                 }
                 mViewPagerAdapter.setData(mViewPagerFragments);
-                mViewPager.setCurrentItem(1, false);
+                mViewPager.setCurrentItem(getCurrentMonthId() - 1, false);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -93,4 +114,12 @@ public class MonthFragment extends Fragment {
             }
         });
     }
+
+    private int getCurrentMonthId() {
+        Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH) + 1; //Keep in mind that months values start from 0, so October is actually month number 9.
+        return (year - 1901) * 12 + month;
+    }
+
 }

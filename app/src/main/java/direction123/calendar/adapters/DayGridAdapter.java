@@ -29,8 +29,7 @@ public class DayGridAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         if (mDays != null) {
-            Log.v("sfefafa", mDays.size() + "");
-            return mDays.size();
+            return 42;
         }
         return 0;
     }

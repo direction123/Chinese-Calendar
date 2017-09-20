@@ -139,8 +139,10 @@ public class ViewPagerFragment extends Fragment {
                             yearDispENG, yearDispCH, monthLuna,
                             dayLunar, dispLongENG, dispLongCH));
                 }
+                for(int i = mLastDay; i < 42; i++) {
+                    mDayModels.add(null);
+                }
                 mGridAdapter.setData(mDayModels);
-                setTitle();
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -162,7 +164,11 @@ public class ViewPagerFragment extends Fragment {
         mLastDay = end;
     }
 
-    private void setTitle() {
-        ((MainActivity) getActivity()).setActionBarTitle(mMonth + " " + mYear);
+    public String getCurMonth() {
+        return mMonth;
+    }
+
+    public String getCurYear() {
+        return mYear;
     }
 }
