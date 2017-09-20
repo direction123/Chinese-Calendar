@@ -16,14 +16,17 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Date;
+
 import direction123.calendar.R;
+import direction123.calendar.interfaces.DatePickerFragmentListener;
 
 /**
  * Created by fangxiangwang on 9/7/17.
  */
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DatePickerFragmentListener{
     // DrawLayout, Navigation Drawer
     DrawerLayout mDrawerLayout;
     NavigationView mDrawerView;
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     Toolbar mToolbar;
     TextView mTitleTextView;
     ImageView mJumpToday;
+    ImageView mDropIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,9 +78,10 @@ public class MainActivity extends AppCompatActivity {
     public void onAttachFragment(Fragment fragment) {
         super.onAttachFragment(fragment);
         FragmentManager fm = getSupportFragmentManager();
-        MonthFragment fragmentByID = (MonthFragment) fm.findFragmentById(fragment.getId());
-        mJumpToday.setOnClickListener(fragmentByID);
-
+        Fragment fragmentByID = fm.findFragmentById(fragment.getId());
+        if (fragmentByID instanceof MonthFragment) {
+            mJumpToday.setOnClickListener((MonthFragment)fragmentByID);
+        }
     }
 
     @Override
@@ -116,6 +121,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         mJumpToday= (ImageView) findViewById(R.id.main_toolbar_today);
+        mDropIcon = (ImageView) findViewById(R.id.main_toolbar_drop);
+        mDropIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });
     }
 
     public void setActionBarTitle(String title){
@@ -149,8 +161,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showDatePickerDialog() {
-     //   DialogFragment newFragment = new DatePickerFragment();
-     //   newFragment.show(getSupportFragmentManager(), "datePicker");
+        DatePickerFragment dFragment = DatePickerFragment.newInstance(this);
+        dFragment.show(getSupportFragmentManager(), "datePicker");
+        //   DialogFragment newFragment = new DatePickerFragment();
+     //
+    }
+
+    @Override
+    public void onDateSet(int year, int month, int day) {
+        Log.v("afagag", year + " " + month + " " + day);
     }
 }
 
