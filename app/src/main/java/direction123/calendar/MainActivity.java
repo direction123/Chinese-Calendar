@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import direction123.calendar.R;
@@ -67,22 +68,17 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         setupToolbar();
 
         // Fragment
-        MonthFragment mFragment = new MonthFragment();
+        Calendar c = Calendar.getInstance();
+        MonthFragment mFragment = MonthFragment.newInstance(
+                c.get(Calendar.YEAR),
+                c.get(Calendar.MONTH),
+                c.get(Calendar.DAY_OF_MONTH));
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, mFragment)
                 .commit();
     }
 
-    @Override
-    public void onAttachFragment(Fragment fragment) {
-        super.onAttachFragment(fragment);
-        FragmentManager fm = getSupportFragmentManager();
-        Fragment fragmentByID = fm.findFragmentById(fragment.getId());
-        if (fragmentByID instanceof MonthFragment) {
-            mJumpToday.setOnClickListener((MonthFragment)fragmentByID);
-        }
-    }
 
     @Override
     protected void onDestroy() {
@@ -121,6 +117,20 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
             }
         });
         mJumpToday= (ImageView) findViewById(R.id.main_toolbar_today);
+        mJumpToday.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Calendar c = Calendar.getInstance();
+                MonthFragment mFragment = MonthFragment.newInstance(
+                        c.get(Calendar.YEAR),
+                        c.get(Calendar.MONTH),
+                        c.get(Calendar.DAY_OF_MONTH));
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.content_frame, mFragment)
+                        .commit();
+            }
+        });
         mDropIcon = (ImageView) findViewById(R.id.main_toolbar_drop);
         mDropIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,13 +173,15 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
     public void showDatePickerDialog() {
         DatePickerFragment dFragment = DatePickerFragment.newInstance(this);
         dFragment.show(getSupportFragmentManager(), "datePicker");
-        //   DialogFragment newFragment = new DatePickerFragment();
-     //
     }
 
     @Override
     public void onDateSet(int year, int month, int day) {
-        Log.v("afagag", year + " " + month + " " + day);
+        MonthFragment mFragment = MonthFragment.newInstance(year, month, day);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, mFragment)
+                .commit();
     }
 }
 

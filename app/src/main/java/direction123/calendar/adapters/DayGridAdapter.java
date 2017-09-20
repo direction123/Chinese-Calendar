@@ -31,6 +31,7 @@ public class DayGridAdapter extends BaseAdapter {
     private Cursor mCursor;
     private String mMonth;
     private String mYear;
+    private int mSelectedDay;
     private int mFirstDay;
     private int mLastDay;
     private List<DayModel> mDayModels = new ArrayList<>();
@@ -41,14 +42,16 @@ public class DayGridAdapter extends BaseAdapter {
         buildDayModels();
         notifyDataSetChanged();
     }
-    public DayGridAdapter(Context context, String month, String year, int firstDay, int lastDay) {
+    public DayGridAdapter(Context context, String month, String year, int selectedDay, int firstDay, int lastDay) {
         mContext = context;
         mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mMonth = month;
         mYear = year;
+        mSelectedDay = selectedDay;
         mFirstDay = firstDay;
         mLastDay = lastDay;
+      //  notifyDataSetChanged();
     }
 
     @Override
@@ -96,16 +99,16 @@ public class DayGridAdapter extends BaseAdapter {
             dayTextView.setText(dayModel.getDispTop());
             dayLunarTextView.setText(dayModel.getDispShort("English"));
         }
-        if (isCurMonth() && position == getDayOfMonth()) {
-            view.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
-            dayTextView.setTextColor(Color.WHITE);
-            dayLunarTextView.setTextColor(Color.WHITE);
-        } else if (!isCurMonth() && position == get1stDayOfMonth()){
+        if (position == getSelectedPosition()) {
             view.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
             dayTextView.setTextColor(Color.WHITE);
             dayLunarTextView.setTextColor(Color.WHITE);
         }
         return view;
+    }
+
+    public int getSelectedPosition() {
+        return mSelectedDay + mFirstDay - 1;
     }
 
     public boolean isCurMonth() {

@@ -30,13 +30,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import direction123.calendar.data.MonthContract;
+import direction123.calendar.interfaces.DatePickerFragmentListener;
 
 
 public class MonthFragment extends Fragment implements ViewPager.OnPageChangeListener,
         DayGridOnClickHandler,
-        LoaderManager.LoaderCallbacks<Cursor>,
-        View.OnClickListener {
+        LoaderManager.LoaderCallbacks<Cursor> {
     private static final String DAYS_ARGS = "daysArgs";
+    private static final String YEAR = "year";
+    private static final String MONTH = "month";
+    private static final String DAY = "day";
 
     @BindView(R.id.viewpager)
     ViewPager mViewPager;
@@ -47,6 +50,11 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
     @BindView(R.id.disp_fortune)
     TextView mDispFortuneView;
 
+    // date
+    private int mSelectedYear;
+    private int mSelectedMonth;  //Keep in mind that months values start from 0, so October is actually month number 9.
+    private int mSelectedDay;
+
     // ViewaPager
     private ViewPagerAdapter mViewPagerAdapter;
     private ViewPagerFragment mCurViewPagerFragment;
@@ -56,6 +64,17 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
 
     private static final int ID_MONTH_LOADER = 33;
     private static final int ID_DAYS_LOADER = 34;
+
+
+    public static MonthFragment newInstance(int year, int month, int day) {
+        MonthFragment mFragment = new MonthFragment();
+        Bundle args = new Bundle();
+        args.putInt(YEAR, year);
+        args.putInt(MONTH, month);
+        args.putInt(DAY, day);
+        mFragment.setArguments(args);
+        return mFragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,8 +87,15 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
         View rootView = inflater.inflate(R.layout.fragment_month, container, false);
         ButterKnife.bind(this, rootView);
 
+        //args
+        Bundle bundle = getArguments();
+        mSelectedYear = bundle.getInt(YEAR);
+        mSelectedMonth = bundle.getInt(MONTH);
+        mSelectedDay = bundle.getInt(DAY);
+
         //ViewPager
-        mViewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), this);
+        mViewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), this,
+                mSelectedYear, mSelectedMonth, mSelectedDay);
         mViewPager.setAdapter(mViewPagerAdapter);
         mViewPager.addOnPageChangeListener(this);
 
@@ -111,22 +137,20 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
         switch (loader.getId()) {
             case ID_MONTH_LOADER: {
                 mViewPagerAdapter.swapCursor(data);
-                mViewPager.setCurrentItem(getCurrentMonthId() - 1, false);
+                mViewPager.setCurrentItem(getSelectedMonthId() - 1, false);
                 break;
             }
             case ID_DAYS_LOADER: {
                 if (mCurViewPagerFragment != null) {
                     DayGridAdapter dayGridAdapter = mCurViewPagerFragment.getAdapter();
                     dayGridAdapter.swapCursor(data);
-                    int position;
+                    int position = dayGridAdapter.getSelectedPosition();
+                    displayBottomText(dayGridAdapter.getDayModels().get(position));
                     if (dayGridAdapter.isCurMonth()) {
-                        position = dayGridAdapter.getDayOfMonth();
                         mJumpToday.setVisibility(View.INVISIBLE);
                     } else {
-                        position = dayGridAdapter.get1stDayOfMonth();
                         mJumpToday.setVisibility(View.VISIBLE);
                     }
-                    displayBottomText(dayGridAdapter.getDayModels().get(position));
                 }
             }
         }
@@ -166,11 +190,8 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
 
     }
 
-    private int getCurrentMonthId() {
-        Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH) + 1; //Keep in mind that months values start from 0, so October is actually month number 9.
-        return (year - 1901) * 12 + month;
+    private int getSelectedMonthId() {
+        return (mSelectedYear - 1901) * 12 + mSelectedMonth + 1;
     }
 
     @Override
@@ -178,10 +199,6 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
         displayBottomText(dayModel);
     }
 
-    @Override
-    public void onClick(View v) {
-        mViewPager.setCurrentItem(getCurrentMonthId() - 1, false);
-    }
 
     private void displayBottomText(DayModel dayModel) {
         mDispYearView.setText(dayModel.getDispYear("Chinese"));

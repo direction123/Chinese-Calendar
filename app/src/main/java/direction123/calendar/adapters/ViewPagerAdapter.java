@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,10 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private List<ViewPagerFragment> mViewPagerFragments = new ArrayList<>();
     private Cursor mCursor;
     private DayGridOnClickHandler mDayGridOnClickHandler;
+    // date
+    private int mSelectedYear;
+    private int mSelectedMonth;  //Keep in mind that months values start from 0, so October is actually month number 9.
+    private int mSelectedDay;
 
     public void swapCursor(Cursor newCursor) {
         mCursor = newCursor;
@@ -25,9 +30,13 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         notifyDataSetChanged();
     }
 
-    public ViewPagerAdapter(FragmentManager fm, DayGridOnClickHandler dayGridOnClickHandler) {
+    public ViewPagerAdapter(FragmentManager fm, DayGridOnClickHandler dayGridOnClickHandler,
+                            int selectedYear, int selectedMonth, int selectedDay) {
         super(fm);
-        this.mDayGridOnClickHandler = dayGridOnClickHandler;
+        mDayGridOnClickHandler = dayGridOnClickHandler;
+        mSelectedYear = selectedYear;
+        mSelectedMonth = selectedMonth;
+        mSelectedDay = selectedDay;
     }
 
     @Override
@@ -53,7 +62,12 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
                 String Month = cursor.getString(cursor.getColumnIndex("Month"));
                 String Year = cursor.getString(cursor.getColumnIndex("Year"));
                 String daysInMonth = cursor.getString(cursor.getColumnIndex("DaysInMonth"));
-                mViewPagerFragments.add(new ViewPagerFragment(MonthId, Month, Year, daysInMonth, mDayGridOnClickHandler));
+
+                if (mSelectedYear == Integer.parseInt(Year) && (mSelectedMonth + 1) == Integer.parseInt(Month)) {
+                    mViewPagerFragments.add(new ViewPagerFragment(MonthId, Month, Year, daysInMonth, mSelectedDay, mDayGridOnClickHandler));
+                } else {
+                    mViewPagerFragments.add(new ViewPagerFragment(MonthId, Month, Year, daysInMonth, 1, mDayGridOnClickHandler));
+                }
 
                 cursor.moveToNext();
             }

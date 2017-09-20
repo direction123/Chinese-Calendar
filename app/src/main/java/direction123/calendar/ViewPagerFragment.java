@@ -53,18 +53,20 @@ public class ViewPagerFragment extends Fragment {
     private String mMonth;
     private String mYear;
     private String[] mDayItems;
+    private int mSelectedDay;
     private int mFirstDay;
     private int mLastDay;
     private DayGridAdapter mGridAdapter;
     private DayGridHeaderAdapter mGridHeaderAdapter;
     private DayGridOnClickHandler mClickHandler;
 
-    public ViewPagerFragment (String monthId, String month, String year, String dayItems, DayGridOnClickHandler clickHandler) {
-        this.mMonthId = monthId;
-        this.mMonth = month;
-        this.mYear = year;
-        this.mDayItems = dayItems.split(",");
-        this.mClickHandler = clickHandler;
+    public ViewPagerFragment (String monthId, String month, String year, String dayItems, int selectedDay, DayGridOnClickHandler clickHandler) {
+        mMonthId = monthId;
+        mMonth = month;
+        mYear = year;
+        mDayItems = dayItems.split(",");
+        mSelectedDay = selectedDay;
+        mClickHandler = clickHandler;
         getFirstAndLastDay();
     }
 
@@ -85,7 +87,7 @@ public class ViewPagerFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         //gridview
-        mGridAdapter = new DayGridAdapter(getContext(), mMonth, mYear, mFirstDay, mLastDay);
+        mGridAdapter = new DayGridAdapter(getContext(), mMonth, mYear, mSelectedDay, mFirstDay, mLastDay);
         mGridView.setAdapter(mGridAdapter);
         mGridView.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -123,6 +125,7 @@ public class ViewPagerFragment extends Fragment {
     public String getCurYear() {
         return mYear;
     }
+
 
     public String getFirstDayId() {
         return mDayItems[mFirstDay];
