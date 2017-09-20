@@ -52,7 +52,7 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
 
     // date
     private int mSelectedYear;
-    private int mSelectedMonth;  //Keep in mind that months values start from 0, so October is actually month number 9.
+    private int mSelectedMonth;
     private int mSelectedDay;
 
     // ViewaPager
@@ -191,7 +191,7 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
     }
 
     private int getSelectedMonthId() {
-        return (mSelectedYear - 1901) * 12 + mSelectedMonth + 1;
+        return (mSelectedYear - 1901) * 12 + mSelectedMonth;
     }
 
     @Override

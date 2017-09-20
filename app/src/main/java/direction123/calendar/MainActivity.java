@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         Calendar c = Calendar.getInstance();
         MonthFragment mFragment = MonthFragment.newInstance(
                 c.get(Calendar.YEAR),
-                c.get(Calendar.MONTH),
+                c.get(Calendar.MONTH) + 1,
                 c.get(Calendar.DAY_OF_MONTH));
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
                 Calendar c = Calendar.getInstance();
                 MonthFragment mFragment = MonthFragment.newInstance(
                         c.get(Calendar.YEAR),
-                        c.get(Calendar.MONTH),
+                        c.get(Calendar.MONTH) + 1,
                         c.get(Calendar.DAY_OF_MONTH));
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 fragmentManager.beginTransaction()

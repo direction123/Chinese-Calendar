@@ -21,7 +21,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private DayGridOnClickHandler mDayGridOnClickHandler;
     // date
     private int mSelectedYear;
-    private int mSelectedMonth;  //Keep in mind that months values start from 0, so October is actually month number 9.
+    private int mSelectedMonth;
     private int mSelectedDay;
 
     public void swapCursor(Cursor newCursor) {
@@ -63,7 +63,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
                 String Year = cursor.getString(cursor.getColumnIndex("Year"));
                 String daysInMonth = cursor.getString(cursor.getColumnIndex("DaysInMonth"));
 
-                if (mSelectedYear == Integer.parseInt(Year) && (mSelectedMonth + 1) == Integer.parseInt(Month)) {
+                if (mSelectedYear == Integer.parseInt(Year) && mSelectedMonth == Integer.parseInt(Month)) {
                     mViewPagerFragments.add(new ViewPagerFragment(MonthId, Month, Year, daysInMonth, mSelectedDay, mDayGridOnClickHandler));
                 } else {
                     mViewPagerFragments.add(new ViewPagerFragment(MonthId, Month, Year, daysInMonth, 1, mDayGridOnClickHandler));
