@@ -59,11 +59,11 @@ public class MainActivity extends AppCompatActivity {
         setupToolbar();
 
         // Fragment
-     /*   MonthFragment mFragment = new MonthFragment();
+        MonthFragment mFragment = new MonthFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, mFragment)
-                .commit(); */
+                .commit();
 
     }
 
