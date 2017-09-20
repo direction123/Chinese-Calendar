@@ -36,6 +36,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import direction123.calendar.adapters.DayGridAdapter;
+import direction123.calendar.adapters.DayGridHeaderAdapter;
 import direction123.calendar.adapters.DayGridOnClickHandler;
 import direction123.calendar.data.DayContract;
 import direction123.calendar.data.DayModel;
@@ -45,6 +46,8 @@ import direction123.calendar.data.MonthContract;
 public class ViewPagerFragment extends Fragment {
     @BindView(R.id.gridView)
     GridView mGridView;
+    @BindView(R.id.gridView_header)
+    GridView mGridViewHeader;
 
     private String mMonthId;
     private String mMonth;
@@ -52,8 +55,8 @@ public class ViewPagerFragment extends Fragment {
     private String[] mDayItems;
     private int mFirstDay;
     private int mLastDay;
-    private List<DayModel> mDayModels = new ArrayList<>();
     private DayGridAdapter mGridAdapter;
+    private DayGridHeaderAdapter mGridHeaderAdapter;
     private DayGridOnClickHandler mClickHandler;
 
     public ViewPagerFragment (String monthId, String month, String year, String dayItems, DayGridOnClickHandler clickHandler) {
@@ -92,6 +95,8 @@ public class ViewPagerFragment extends Fragment {
                 mClickHandler.onClick(dayModels.get(position));
             }
         });
+        mGridHeaderAdapter = new DayGridHeaderAdapter(getContext());
+        mGridViewHeader.setAdapter(mGridHeaderAdapter);
 
         return rootView;
     }

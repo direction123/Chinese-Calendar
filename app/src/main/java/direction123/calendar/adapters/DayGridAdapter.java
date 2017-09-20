@@ -118,7 +118,7 @@ public class DayGridAdapter extends BaseAdapter {
             }
         }
         for(int i = mLastDay; i < 42; i++) {
-            mDayModels.add(null);
+         //   mDayModels.add(null);
         }
     }
 

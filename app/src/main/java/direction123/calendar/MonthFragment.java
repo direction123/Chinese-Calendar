@@ -9,7 +9,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +22,11 @@ import direction123.calendar.data.DayContract;
 import direction123.calendar.data.DayModel;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import direction123.calendar.data.MonthContract;
+import direction123.calendar.utils.WrapContentHeightViewPager;
 
 
 public class MonthFragment extends Fragment implements ViewPager.OnPageChangeListener,
@@ -33,7 +35,7 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
     private static final String DAYS_ARGS = "daysArgs";
 
     @BindView(R.id.viewpager)
-    ViewPager mViewPager;
+    WrapContentHeightViewPager mViewPager;
     @BindView(R.id.disp_year)
     TextView mDispYearView;
     @BindView(R.id.disp_long)
@@ -120,8 +122,9 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
     public void onPageSelected(int position) {
         mCurViewPagerFragment = (ViewPagerFragment) mViewPagerAdapter.getItem(position);
         if (mCurViewPagerFragment != null) {
-            String title = mCurViewPagerFragment.getCurMonth() + " " + mCurViewPagerFragment.getCurYear();
-            ((MainActivity) getActivity()).setActionBarTitle(title);
+            ((MainActivity) getActivity()).setActionBarTitle(
+                    getTitle(mCurViewPagerFragment.getCurMonth(),
+                    mCurViewPagerFragment.getCurYear()));
 
             String firstDayId = mCurViewPagerFragment.getFirstDayId();
             String lastDayId = mCurViewPagerFragment.getLastDayId();
@@ -153,6 +156,25 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
     @Override
     public void onClick(DayModel dayModel) {
         mDispYearView.setText(dayModel.getDispYear("Chinese"));
+        mDsipLongView.setText(dayModel.getDispLong("Chinese"));
+    }
+
+    private String getTitle (String month, String year) {
+        Map<String, String> hashMap = new HashMap<>();
+        hashMap.put("1", "January");
+        hashMap.put("2", "February");
+        hashMap.put("3", "March");
+        hashMap.put("4", "April");
+        hashMap.put("5", "May");
+        hashMap.put("6", "June");
+        hashMap.put("7", "July");
+        hashMap.put("8", "Auguest");
+        hashMap.put("9", "September");
+        hashMap.put("10", "October");
+        hashMap.put("11", "November");
+        hashMap.put("12", "December");
+
+        return hashMap.get(month) + " " + year;
     }
 
 }

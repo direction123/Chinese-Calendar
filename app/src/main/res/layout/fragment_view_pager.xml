@@ -5,10 +5,29 @@
     android:orientation="vertical" >
 
     <GridView
+        android:id="@+id/gridView_header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:listSelector="@android:color/transparent"
+        android:numColumns="7"
+        android:horizontalSpacing="10dp"
+        android:verticalSpacing="10dp"
+        android:gravity="center"
+        android:stretchMode="columnWidth"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"/>
+
+   <GridView
         android:id="@+id/gridView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:listSelector="@android:color/transparent"
         android:numColumns="7"
-        android:stretchMode="columnWidth" />
-</LinearLayout>
+        android:horizontalSpacing="10dp"
+        android:verticalSpacing="10dp"
+        android:gravity="center"
+        android:stretchMode="columnWidth"
+        android:paddingBottom="16dp"/>
+ </LinearLayout>
+
+
