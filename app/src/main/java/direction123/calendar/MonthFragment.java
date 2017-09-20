@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import direction123.calendar.adapters.DayGridAdapter;
 import direction123.calendar.adapters.DayGridOnClickHandler;
 import direction123.calendar.adapters.ViewPagerAdapter;
 import direction123.calendar.data.DayContract;
@@ -105,8 +106,17 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
                 break;
             }
             case ID_DAYS_LOADER: {
-                if (mCurViewPagerFragment != null)
-                    mCurViewPagerFragment.getAdapter().swapCursor(data);
+                if (mCurViewPagerFragment != null) {
+                    DayGridAdapter dayGridAdapter = mCurViewPagerFragment.getAdapter();
+                    dayGridAdapter.swapCursor(data);
+                    int position;
+                    if (dayGridAdapter.isCurMonth()) {
+                        position = dayGridAdapter.getDayOfMonth();
+                    } else {
+                        position = dayGridAdapter.get1stDayOfMonth();
+                    }
+                    displayBottomText(dayGridAdapter.getDayModels().get(position));
+                }
             }
         }
 
@@ -154,6 +164,10 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
 
     @Override
     public void onClick(DayModel dayModel) {
+        displayBottomText(dayModel);
+    }
+
+    private void displayBottomText(DayModel dayModel) {
         mDispYearView.setText(dayModel.getDispYear("Chinese"));
         mDsipLongView.setText(dayModel.getDispLong("Chinese"));
     }

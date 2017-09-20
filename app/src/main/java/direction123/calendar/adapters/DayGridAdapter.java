@@ -35,6 +35,7 @@ public class DayGridAdapter extends BaseAdapter {
     private int mLastDay;
     private List<DayModel> mDayModels = new ArrayList<>();
 
+
     public void swapCursor(Cursor newCursor) {
         mCursor = newCursor;
         buildDayModels();
@@ -99,11 +100,15 @@ public class DayGridAdapter extends BaseAdapter {
             view.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
             dayTextView.setTextColor(Color.WHITE);
             dayLunarTextView.setTextColor(Color.WHITE);
+        } else if (!isCurMonth() && position == get1stDayOfMonth()){
+            view.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+            dayTextView.setTextColor(Color.WHITE);
+            dayLunarTextView.setTextColor(Color.WHITE);
         }
         return view;
     }
 
-    private boolean isCurMonth() {
+    public boolean isCurMonth() {
         Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH) + 1; //Keep in mind that months values start from 0, so October is actually month number 9.
@@ -113,10 +118,14 @@ public class DayGridAdapter extends BaseAdapter {
         return false;
     }
 
-    private int getDayOfMonth() {
+    public int getDayOfMonth() {
         Calendar c = Calendar.getInstance();
         int day = c.get(Calendar.DAY_OF_MONTH);
         return mFirstDay + day - 1;
+    }
+
+    public int get1stDayOfMonth() {
+        return mFirstDay;
     }
 
     public void setData(List<DayModel> dayModels){

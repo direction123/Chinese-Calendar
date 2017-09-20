@@ -95,6 +95,8 @@ public class ViewPagerFragment extends Fragment {
                 mClickHandler.onClick(dayModels.get(position));
             }
         });
+        mGridView.setSelection(10);
+
         mGridHeaderAdapter = new DayGridHeaderAdapter(getContext());
         mGridViewHeader.setAdapter(mGridHeaderAdapter);
 
