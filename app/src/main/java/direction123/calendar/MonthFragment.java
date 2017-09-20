@@ -11,7 +11,9 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import direction123.calendar.adapters.DayGridOnClickHandler;
 import direction123.calendar.adapters.ViewPagerAdapter;
+import direction123.calendar.data.DayModel;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,7 +26,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class MonthFragment extends Fragment implements ViewPager.OnPageChangeListener {
+public class MonthFragment extends Fragment implements ViewPager.OnPageChangeListener,
+        DayGridOnClickHandler {
     private static final String TAG = "MonthFragment";
 
     @BindView(R.id.viewpager)
@@ -103,7 +106,7 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
                             daysInMonth = single.getValue().toString();
                         }
                     }
-                    mViewPagerFragments.add(ViewPagerFragment.newInstance(MonthId, Month, Year, daysInMonth));
+                    mViewPagerFragments.add(new ViewPagerFragment(MonthId, Month, Year, daysInMonth, getOuter()));
                 }
                 mViewPagerAdapter.setData(mViewPagerFragments);
                 mViewPager.setCurrentItem(getCurrentMonthId() - 1, false);
@@ -115,11 +118,20 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
         });
     }
 
+    public MonthFragment getOuter() {
+        return MonthFragment.this;
+    }
+
     private int getCurrentMonthId() {
         Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH) + 1; //Keep in mind that months values start from 0, so October is actually month number 9.
         return (year - 1901) * 12 + month;
+    }
+
+    @Override
+    public void onClick(DayModel dayModel) {
+        mDispYearView.setText(dayModel.getDispYear("English"));
     }
 
 }

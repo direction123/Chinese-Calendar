@@ -1,5 +1,6 @@
 package direction123.calendar;
 
+import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -31,8 +32,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import direction123.calendar.adapters.DayGridAdapter;
+import direction123.calendar.adapters.DayGridOnClickHandler;
 import direction123.calendar.data.DayModel;
 
+@SuppressLint("ValidFragment")
 public class ViewPagerFragment extends Fragment {
     @BindView(R.id.gridView)
     GridView mGridView;
@@ -45,18 +48,15 @@ public class ViewPagerFragment extends Fragment {
     private int mLastDay;
     private List<DayModel> mDayModels = new ArrayList<>();
     private DayGridAdapter mGridAdapter;
+    private DayGridOnClickHandler mClickHandler;
 
-
-    public static ViewPagerFragment newInstance(String monthId, String month, String year, String dayItems) {
-        Bundle args = new Bundle();
-        args.putString("monthId", monthId);
-        args.putString("month", month);
-        args.putString("year", year);
-        args.putString("dayItems", dayItems);
-
-        ViewPagerFragment fragment = new ViewPagerFragment();
-        fragment.setArguments(args);
-        return fragment;
+    public ViewPagerFragment (String monthId, String month, String year, String dayItems, DayGridOnClickHandler clickHandler) {
+        this.mMonthId = monthId;
+        this.mMonth = month;
+        this.mYear = year;
+        this.mDayItems = dayItems.split(",");
+        this.mClickHandler = clickHandler;
+        getFirstDay();
     }
 
     @Override
@@ -75,22 +75,23 @@ public class ViewPagerFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_view_pager, container, false);
         ButterKnife.bind(this, rootView);
 
-        //arguments
-        mMonthId = getArguments().getString("monthId");
-        mMonth = getArguments().getString("month");
-        mYear = getArguments().getString("year");
-        mDayItems = getArguments().getString("dayItems").split(",");
-        getFirstDay();
-
         //gridview
         mGridAdapter = new DayGridAdapter(getContext());
         mGridView.setAdapter(mGridAdapter);
+        mGridView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView parent, View view,
+                                    int position, long id) {
+                mClickHandler.onClick(mDayModels.get(position));
+            }
+        });
 
         //firebase
         loadDaysOneMonthFromFirebase();
 
         return rootView;
     }
+
 
     private void loadDaysOneMonthFromFirebase() {
         for(int i = 0; i < mFirstDay; i++) {
