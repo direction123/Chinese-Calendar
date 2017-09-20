@@ -27,6 +27,7 @@
         android:verticalSpacing="10dp"
         android:gravity="center"
         android:stretchMode="columnWidth"
+        android:paddingTop="16dp"
         android:paddingBottom="16dp"/>
  </LinearLayout>
 

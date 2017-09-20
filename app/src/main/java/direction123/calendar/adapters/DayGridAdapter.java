@@ -6,6 +6,8 @@ package direction123.calendar.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import direction123.calendar.R;
@@ -24,7 +27,10 @@ import direction123.calendar.data.DayModel;
 public class DayGridAdapter extends BaseAdapter {
     private static final int DAYS_LENGTH = 42;
     private LayoutInflater mInflater;
+    private Context mContext;
     private Cursor mCursor;
+    private String mMonth;
+    private String mYear;
     private int mFirstDay;
     private int mLastDay;
     private List<DayModel> mDayModels = new ArrayList<>();
@@ -34,9 +40,12 @@ public class DayGridAdapter extends BaseAdapter {
         buildDayModels();
         notifyDataSetChanged();
     }
-    public DayGridAdapter(Context context, int firstDay, int lastDay) {
+    public DayGridAdapter(Context context, String month, String year, int firstDay, int lastDay) {
+        mContext = context;
         mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mMonth = month;
+        mYear = year;
         mFirstDay = firstDay;
         mLastDay = lastDay;
     }
@@ -78,15 +87,36 @@ public class DayGridAdapter extends BaseAdapter {
 
         if (view == null) {
             view = mInflater.inflate(R.layout.day_grid, parent, false);
-            dayTextView = (TextView) view.findViewById(R.id.day);
-            dayLunarTextView = (TextView) view.findViewById(R.id.day_lunar);
-            if (mDayModels != null && position >= 0 && position < getCount() && mDayModels.get(position) != null) {
-                DayModel dayModel = mDayModels.get(position);
-                dayTextView.setText(dayModel.getDispTop());
-                dayLunarTextView.setText(dayModel.getDispShort("English"));
-            }
+        }
+        dayTextView = (TextView) view.findViewById(R.id.day);
+        dayLunarTextView = (TextView) view.findViewById(R.id.day_lunar);
+        if (mDayModels != null && position >= 0 && position < getCount() && mDayModels.get(position) != null) {
+            DayModel dayModel = mDayModels.get(position);
+            dayTextView.setText(dayModel.getDispTop());
+            dayLunarTextView.setText(dayModel.getDispShort("English"));
+        }
+        if (isCurMonth() && position == getDayOfMonth()) {
+            view.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+            dayTextView.setTextColor(Color.WHITE);
+            dayLunarTextView.setTextColor(Color.WHITE);
         }
         return view;
+    }
+
+    private boolean isCurMonth() {
+        Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH) + 1; //Keep in mind that months values start from 0, so October is actually month number 9.
+        if (year == Integer.parseInt(mYear) && month == Integer.parseInt(mMonth)) {
+            return true;
+        }
+        return false;
+    }
+
+    private int getDayOfMonth() {
+        Calendar c = Calendar.getInstance();
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        return mFirstDay + day - 1;
     }
 
     public void setData(List<DayModel> dayModels){

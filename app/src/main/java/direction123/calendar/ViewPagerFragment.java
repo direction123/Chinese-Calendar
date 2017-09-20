@@ -85,7 +85,7 @@ public class ViewPagerFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         //gridview
-        mGridAdapter = new DayGridAdapter(getContext(), mFirstDay, mLastDay);
+        mGridAdapter = new DayGridAdapter(getContext(), mMonth, mYear, mFirstDay, mLastDay);
         mGridView.setAdapter(mGridAdapter);
         mGridView.setOnItemClickListener(new OnItemClickListener() {
             @Override

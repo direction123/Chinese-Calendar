@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import direction123.calendar.data.MonthContract;
-import direction123.calendar.utils.WrapContentHeightViewPager;
 
 
 public class MonthFragment extends Fragment implements ViewPager.OnPageChangeListener,
@@ -35,7 +34,7 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
     private static final String DAYS_ARGS = "daysArgs";
 
     @BindView(R.id.viewpager)
-    WrapContentHeightViewPager mViewPager;
+    ViewPager mViewPager;
     @BindView(R.id.disp_year)
     TextView mDispYearView;
     @BindView(R.id.disp_long)
