@@ -7,17 +7,13 @@ package direction123.calendar.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -25,7 +21,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import direction123.calendar.R;
-import direction123.calendar.ViewPagerFragment;
 import direction123.calendar.data.DayModel;
 
 public class DayGridAdapter extends BaseAdapter {
@@ -55,7 +50,6 @@ public class DayGridAdapter extends BaseAdapter {
         mSelectedDay = selectedDay;
         mFirstDay = firstDay;
         mLastDay = lastDay;
-      //  notifyDataSetChanged();
     }
 
     @Override
@@ -92,22 +86,11 @@ public class DayGridAdapter extends BaseAdapter {
         View view = convertView;
         TextView dayTextView;
         TextView dayLunarTextView;
-        LinearLayout dayGridLayout;
 
         if (view == null) {
             view = mInflater.inflate(R.layout.day_grid, parent, false);
         }
-        dayGridLayout = (LinearLayout) view.findViewById(R.id.day_grid);
-      /*  GradientDrawable border = new GradientDrawable();
-        border.setColor(Color.BLUE);
-        border.setCornerRadius(10);
-        border.setStroke(2, Color.GREEN);
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            dayGridLayout.setBackgroundDrawable(border);
-        } else {
-            dayGridLayout.setBackground(border);
-        }
-*/
+
         dayTextView = (TextView) view.findViewById(R.id.day);
         dayLunarTextView = (TextView) view.findViewById(R.id.day_lunar);
         if (mDayModels != null && position >= 0 && position < getCount() && mDayModels.get(position) != null) {
@@ -117,15 +100,19 @@ public class DayGridAdapter extends BaseAdapter {
         }
         if (position == getSelectedPosition()) {
             setPrimaryColorBackground(view);
-           /* view.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
-            dayTextView.setTextColor(Color.WHITE);
-            dayLunarTextView.setTextColor(Color.WHITE);
-            if (isToday()) {
-                dayTextView.setTypeface(null, Typeface.BOLD);
-                dayLunarTextView.setTypeface(null, Typeface.BOLD);
-            }*/
+        } else {
+            setNoSelectedBackground(view);
         }
         return view;
+    }
+
+    private void setNoSelectedBackground(View view) {
+        TextView dayTextView = (TextView) view.findViewById(R.id.day);
+        TextView dayLunarTextView = (TextView) view.findViewById(R.id.day_lunar);
+
+        view.setBackgroundColor(Color.WHITE);
+        dayTextView.setTextColor(Color.BLACK);
+        dayLunarTextView.setTextColor(Color.BLACK);
     }
 
     private void setPrimaryColorBackground(View view) {
@@ -155,28 +142,6 @@ public class DayGridAdapter extends BaseAdapter {
             return true;
         }
         return false;
-    }
-
-    private boolean isToday() {
-        Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH) + 1;
-        int day = c.get(Calendar.DAY_OF_MONTH);
-        if (year == Integer.parseInt(mYear) && month == Integer.parseInt(mMonth)
-                && day == mSelectedDay) {
-            return true;
-        }
-        return false;
-    }
-
-    public int getDayOfMonth() {
-        Calendar c = Calendar.getInstance();
-        int day = c.get(Calendar.DAY_OF_MONTH);
-        return mFirstDay + day - 1;
-    }
-
-    public int get1stDayOfMonth() {
-        return mFirstDay;
     }
 
     public void setData(List<DayModel> dayModels){
