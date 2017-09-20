@@ -1,8 +1,14 @@
 package direction123.calendar;
 
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
+
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,22 +19,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import direction123.calendar.adapters.DayGridOnClickHandler;
 import direction123.calendar.adapters.ViewPagerAdapter;
+import direction123.calendar.data.DayContract;
 import direction123.calendar.data.DayModel;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+
+import direction123.calendar.data.MonthContract;
+
 
 public class MonthFragment extends Fragment implements ViewPager.OnPageChangeListener,
-        DayGridOnClickHandler {
-    private static final String TAG = "MonthFragment";
+        DayGridOnClickHandler,
+        LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String DAYS_ARGS = "daysArgs";
 
     @BindView(R.id.viewpager)
     ViewPager mViewPager;
@@ -40,8 +42,11 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
     TextView mDispFortuneView;
 
     // ViewaPager
-    private List<ViewPagerFragment> mViewPagerFragments = new ArrayList<>();
     private ViewPagerAdapter mViewPagerAdapter;
+    private ViewPagerFragment mCurViewPagerFragment;
+
+    private static final int ID_MONTH_LOADER = 33;
+    private static final int ID_DAYS_LOADER = 34;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,22 +60,76 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
         ButterKnife.bind(this, rootView);
 
         //ViewPager
-        mViewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
+        mViewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), this);
         mViewPager.setAdapter(mViewPagerAdapter);
         mViewPager.addOnPageChangeListener(this);
 
-        //firebase
-        loadAllDaysFromFirebase();
+        // Loader
+        getActivity().getSupportLoaderManager().initLoader(ID_MONTH_LOADER, null, this);
 
         return rootView;
     }
 
     @Override
+    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
+        switch (loaderId) {
+            case ID_MONTH_LOADER:
+                Uri getAllDaysUri = MonthContract.MonthEntry.CONTENT_URI;
+                return new CursorLoader(getContext(),
+                        getAllDaysUri,
+                        null,
+                        null,
+                        null,
+                        null);
+
+            case ID_DAYS_LOADER:
+                Uri getDaysOneMonthUri = DayContract.DayEntry.CONTENT_URI;
+                String arguments[]= args.getStringArray(DAYS_ARGS);
+                return new CursorLoader(getContext(),
+                        getDaysOneMonthUri,
+                        null,
+                        null,
+                        arguments,
+                        null);
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        switch (loader.getId()) {
+            case ID_MONTH_LOADER: {
+                mViewPagerAdapter.swapCursor(data);
+                mViewPager.setCurrentItem(getCurrentMonthId() - 1, false);
+                break;
+            }
+            case ID_DAYS_LOADER: {
+                if (mCurViewPagerFragment != null)
+                    mCurViewPagerFragment.getAdapter().swapCursor(data);
+            }
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
+
+    @Override
     public void onPageSelected(int position) {
-        ViewPagerFragment viewPagerFragment = (ViewPagerFragment) mViewPagerAdapter.getItem(position);
-        if (viewPagerFragment != null) {
-            String title = viewPagerFragment.getCurMonth() + " " + viewPagerFragment.getCurYear();
+        mCurViewPagerFragment = (ViewPagerFragment) mViewPagerAdapter.getItem(position);
+        if (mCurViewPagerFragment != null) {
+            String title = mCurViewPagerFragment.getCurMonth() + " " + mCurViewPagerFragment.getCurYear();
             ((MainActivity) getActivity()).setActionBarTitle(title);
+
+            String firstDayId = mCurViewPagerFragment.getFirstDayId();
+            String lastDayId = mCurViewPagerFragment.getLastDayId();
+
+            String[] args = new String[]{firstDayId, lastDayId};
+            Bundle bundle = new Bundle();
+            bundle.putStringArray(DAYS_ARGS, args);
+            getActivity().getSupportLoaderManager().restartLoader(ID_DAYS_LOADER, bundle, this);
         }
     }
 
@@ -84,44 +143,6 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
 
     }
 
-    private void loadAllDaysFromFirebase() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("month");
-        Query allDaysQuery = ref.orderByKey();
-        allDaysQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
-                    String MonthId = "", Month = "", Year = "", daysInMonth = "";
-                    for (DataSnapshot single : singleSnapshot.getChildren()) {
-                        if (single.getKey().equals("MonthId")) {
-                            MonthId = single.getValue().toString();
-                        }
-                        if (single.getKey().equals("Month")) {
-                            Month = single.getValue().toString();
-                        }
-                        if (single.getKey().equals("Year")) {
-                            Year = single.getValue().toString();
-                        }
-                        if (single.getKey().equals("DaysInMonth")) {
-                            daysInMonth = single.getValue().toString();
-                        }
-                    }
-                    mViewPagerFragments.add(new ViewPagerFragment(MonthId, Month, Year, daysInMonth, getOuter()));
-                }
-                mViewPagerAdapter.setData(mViewPagerFragments);
-                mViewPager.setCurrentItem(getCurrentMonthId() - 1, false);
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("onCancelled", "onCancelled", databaseError.toException());
-            }
-        });
-    }
-
-    public MonthFragment getOuter() {
-        return MonthFragment.this;
-    }
-
     private int getCurrentMonthId() {
         Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
@@ -131,7 +152,7 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
 
     @Override
     public void onClick(DayModel dayModel) {
-        mDispYearView.setText(dayModel.getDispYear("English"));
+        mDispYearView.setText(dayModel.getDispYear("Chinese"));
     }
 
 }

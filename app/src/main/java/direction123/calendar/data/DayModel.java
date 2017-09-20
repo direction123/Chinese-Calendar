@@ -11,20 +11,20 @@ public class DayModel {
     private String mYearDispENG;
     private String mYearDispCH;
     private String mMonthLuna;
-    private String mDayLunar;
+    private String mDayLuna;
     private String mDispLongENG;
     private String mDispLongCH;
 
     public DayModel(String dispTop, String dispShortENG, String dispShortCH,
             String yearDispENG, String yearDispCH, String monthLuna,
-            String dayLunar, String dispLongENG, String dispLongCH) {
+            String dayLuna, String dispLongENG, String dispLongCH) {
         this.mDispTop = dispTop;
         this.mDispShortENG = dispShortENG;
         this.mDispShortCH = dispShortCH;
         this.mYearDispENG = yearDispENG;
         this.mYearDispCH = yearDispCH;
         this.mMonthLuna = monthLuna;
-        this.mDayLunar = dayLunar;
+        this.mDayLuna = dayLuna;
         this.mDispLongENG = dispLongENG;
         this.mDispLongCH = dispLongCH;
     }
@@ -44,7 +44,7 @@ public class DayModel {
         if (language.equals("English")) {
             return mYearDispENG;
         }
-        return mYearDispCH + " " + mMonthLuna + " " + mDayLunar;
+        return mYearDispCH + " " + mMonthLuna + " " + mDayLuna;
     }
     public String getDispLong(String language) {
         if (language.equals("English")) {

@@ -2,9 +2,13 @@ package direction123.calendar;
 
 import android.annotation.SuppressLint;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +37,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import direction123.calendar.adapters.DayGridAdapter;
 import direction123.calendar.adapters.DayGridOnClickHandler;
+import direction123.calendar.data.DayContract;
 import direction123.calendar.data.DayModel;
+import direction123.calendar.data.MonthContract;
 
 @SuppressLint("ValidFragment")
 public class ViewPagerFragment extends Fragment {
@@ -56,7 +62,7 @@ public class ViewPagerFragment extends Fragment {
         this.mYear = year;
         this.mDayItems = dayItems.split(",");
         this.mClickHandler = clickHandler;
-        getFirstDay();
+        getFirstAndLastDay();
     }
 
     @Override
@@ -76,83 +82,21 @@ public class ViewPagerFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         //gridview
-        mGridAdapter = new DayGridAdapter(getContext());
+        mGridAdapter = new DayGridAdapter(getContext(), mFirstDay, mLastDay);
         mGridView.setAdapter(mGridAdapter);
         mGridView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView parent, View view,
                                     int position, long id) {
-                mClickHandler.onClick(mDayModels.get(position));
+                List<DayModel> dayModels = mGridAdapter.getDayModels();
+                mClickHandler.onClick(dayModels.get(position));
             }
         });
-
-        //firebase
-        loadDaysOneMonthFromFirebase();
 
         return rootView;
     }
 
-
-    private void loadDaysOneMonthFromFirebase() {
-        for(int i = 0; i < mFirstDay; i++) {
-            mDayModels.add(null);
-        }
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("days");
-        Query allDaysQuery = ref.orderByKey()
-                .startAt(String.valueOf(Integer.parseInt(mDayItems[mFirstDay])- 1))
-                .endAt(String.valueOf(Integer.parseInt(mDayItems[mLastDay])- 1));
-        allDaysQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
-                    String dispTop = "", dispShortENG = "", dispShortCH = "", yearDispENG = "", yearDispCH = "";
-                    String monthLuna = "", dayLunar = "", dispLongENG = "", dispLongCH = "";
-                    for (DataSnapshot single : singleSnapshot.getChildren()) {
-                        if (single.getKey().equals("DispTop")) {
-                            dispTop = single.getValue().toString();
-                        }
-                        if (single.getKey().equals("DispShortENG")) {
-                            dispShortENG = single.getValue().toString();
-                        }
-                        if (single.getKey().equals("DispShortCH")) {
-                            dispShortCH = single.getValue().toString();
-                        }
-                        if (single.getKey().equals("YearDispENG")) {
-                            yearDispENG = single.getValue().toString();
-                        }
-                        if (single.getKey().equals("YearDispCH")) {
-                            yearDispCH = single.getValue().toString();
-                        }
-                        if (single.getKey().equals("MonthLuna")) {
-                            monthLuna = single.getValue().toString();
-                        }
-                        if (single.getKey().equals("DayLunar")) {
-                            dayLunar = single.getValue().toString();
-                        }
-                        if (single.getKey().equals("DispLongENG")) {
-                            dispLongENG = single.getValue().toString();
-                        }
-                        if (single.getKey().equals("DispLongCH")) {
-                            dispLongCH = single.getValue().toString();
-                        }
-                    }
-                    mDayModels.add(new DayModel(dispTop, dispShortENG, dispShortCH,
-                            yearDispENG, yearDispCH, monthLuna,
-                            dayLunar, dispLongENG, dispLongCH));
-                }
-                for(int i = mLastDay; i < 42; i++) {
-                    mDayModels.add(null);
-                }
-                mGridAdapter.setData(mDayModels);
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("onCancelled", "onCancelled", databaseError.toException());
-            }
-        });
-    }
-
-    private void getFirstDay() {
+    public void getFirstAndLastDay() {
         int start = 0;
         int end = mDayItems.length - 1;
         while (mDayItems[start].equals("0")) {
@@ -171,5 +115,17 @@ public class ViewPagerFragment extends Fragment {
 
     public String getCurYear() {
         return mYear;
+    }
+
+    public String getFirstDayId() {
+        return mDayItems[mFirstDay];
+    }
+
+    public String getLastDayId() {
+        return mDayItems[mLastDay];
+    }
+
+    public DayGridAdapter getAdapter() {
+        return mGridAdapter;
     }
 }
