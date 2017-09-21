@@ -20,5 +20,13 @@ public class DayContract {
                 .build();
 
         public static final String TABLE_NAME = "Days";
+
+        public static Uri buildCurrentDay(int year, int month, int day) {
+            return CONTENT_URI.buildUpon()
+                    .appendPath(Integer.toString(year))
+                    .appendPath(Integer.toString(month))
+                    .appendPath(Integer.toString(day))
+                    .build();
+        }
     }
 }
