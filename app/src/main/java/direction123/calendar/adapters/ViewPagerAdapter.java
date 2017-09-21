@@ -64,9 +64,9 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
                 String daysInMonth = cursor.getString(cursor.getColumnIndex("DaysInMonth"));
 
                 if (mSelectedYear == Integer.parseInt(Year) && mSelectedMonth == Integer.parseInt(Month)) {
-                    mViewPagerFragments.add(ViewPagerFragment.newInstance(MonthId, Month, Year, daysInMonth, mSelectedDay, mDayGridOnClickHandler));
+                    mViewPagerFragments.add(new ViewPagerFragment(MonthId, Month, Year, daysInMonth, mSelectedDay, mDayGridOnClickHandler));
                 } else {
-                    mViewPagerFragments.add(ViewPagerFragment.newInstance(MonthId, Month, Year, daysInMonth, 1, mDayGridOnClickHandler));
+                    mViewPagerFragments.add(new ViewPagerFragment(MonthId, Month, Year, daysInMonth, 1, mDayGridOnClickHandler));
                 }
 
                 cursor.moveToNext();

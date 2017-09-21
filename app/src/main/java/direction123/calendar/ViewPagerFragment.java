@@ -35,13 +35,6 @@ import direction123.calendar.data.DayModel;
 
 @SuppressLint("ValidFragment")
 public class ViewPagerFragment extends Fragment {
-    private static final String MONTH_ID = "daysArgs";
-    private static final String MONTH = "year";
-    private static final String YEAR = "month";
-    private static final String DAY_ITEMS = "dayItems";
-    private static final String SELECTED_DAY = "selectedDay";
-
-
     @BindView(R.id.gridView)
     GridView mGridView;
     @BindView(R.id.gridView_header)
@@ -58,22 +51,14 @@ public class ViewPagerFragment extends Fragment {
     private DayGridHeaderAdapter mGridHeaderAdapter;
     private DayGridOnClickHandler mClickHandler;
 
-    public static ViewPagerFragment newInstance(String monthId, String month, String year, String dayItems,
-                                                int selectedDay, DayGridOnClickHandler clickHandler) {
-        ViewPagerFragment vFragment = new ViewPagerFragment();
-        Bundle args = new Bundle();
-        args.putString(MONTH_ID, monthId);
-        args.putString(MONTH, month);
-        args.putString(YEAR, year);
-        args.putString(DAY_ITEMS, dayItems);
-        args.putInt(SELECTED_DAY, selectedDay);
-        vFragment.setDayGridOnClickHandler(clickHandler);
-        vFragment.setArguments(args);
-        return vFragment;
-    }
-
-    private void setDayGridOnClickHandler(DayGridOnClickHandler clickHandler) {
+    public ViewPagerFragment (String monthId, String month, String year, String dayItems, int selectedDay, DayGridOnClickHandler clickHandler) {
+        mMonthId = monthId;
+        mMonth = month;
+        mYear = year;
+        mDayItems = dayItems.split(",");
+        mSelectedDay = selectedDay;
         mClickHandler = clickHandler;
+        getFirstAndLastDay();
     }
 
     @Override
@@ -91,15 +76,6 @@ public class ViewPagerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_view_pager, container, false);
         ButterKnife.bind(this, rootView);
-
-        //args
-        Bundle bundle = getArguments();
-        mMonthId = bundle.getString(MONTH_ID);
-        mMonth = bundle.getString(MONTH);
-        mYear = bundle.getString(YEAR);
-        mDayItems = bundle.getString(DAY_ITEMS).split(",");
-        mSelectedDay = bundle.getInt(SELECTED_DAY);;
-        getFirstAndLastDay();
 
         //gridview
         mGridAdapter = new DayGridAdapter(getContext(), mMonth, mYear, mSelectedDay, mFirstDay, mLastDay);
