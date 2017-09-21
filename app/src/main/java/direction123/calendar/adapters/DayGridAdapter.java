@@ -22,6 +22,7 @@ import java.util.List;
 
 import direction123.calendar.R;
 import direction123.calendar.data.DayModel;
+import direction123.calendar.utils.GridBackground;
 
 public class DayGridAdapter extends BaseAdapter {
     private static final int DAYS_LENGTH = 42;
@@ -33,6 +34,7 @@ public class DayGridAdapter extends BaseAdapter {
     private int mSelectedDay;
     private int mFirstDay;
     private int mLastDay;
+    private int mLoadCount;
     private List<DayModel> mDayModels = new ArrayList<>();
 
 
@@ -98,53 +100,44 @@ public class DayGridAdapter extends BaseAdapter {
             dayTextView.setText(dayModel.getDispTop());
             dayLunarTextView.setText(dayModel.getDispShort("English"));
         }
-        if (position == getSelectedPosition()) {
-            if (isCurMonth()) {
-                setPrimaryColorBackground(view);
+        GridBackground gridBackground = new GridBackground(mContext);
+        if (isCurMonth()) {
+            if (mSelectedDay == Calendar.getInstance().get(Calendar.DAY_OF_MONTH)) {
+                if (position == (mSelectedDay + mFirstDay - 1)) {
+                    gridBackground.setPrimaryColorBackground(view);
+                } else {
+                    gridBackground.setNoSelectedBackground(view);
+                }
             } else {
-                setPrimaryColorBorder(view);
+                if (position == (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + mFirstDay - 1)) {
+                    gridBackground.setGreyColorBackground(view);
+                } else if (position == (mSelectedDay + mFirstDay - 1)) {
+                    gridBackground.setPrimaryColorBorder(view);
+                } else {
+                    gridBackground.setNoSelectedBackground(view);
+                }
             }
         } else {
-            setNoSelectedBackground(view);
+            if (position == (mSelectedDay + mFirstDay - 1)) {
+                gridBackground.setPrimaryColorBorder(view);
+            } else {
+                gridBackground.setNoSelectedBackground(view);
+            }
         }
         return view;
     }
 
-    private void setNoSelectedBackground(View view) {
-        TextView dayTextView = (TextView) view.findViewById(R.id.day);
-        TextView dayLunarTextView = (TextView) view.findViewById(R.id.day_lunar);
-
-        view.setBackgroundColor(Color.WHITE);
-        dayTextView.setTextColor(Color.BLACK);
-        dayLunarTextView.setTextColor(Color.BLACK);
-    }
-
-    private void setPrimaryColorBackground(View view) {
-        TextView dayTextView = (TextView) view.findViewById(R.id.day);
-        TextView dayLunarTextView = (TextView) view.findViewById(R.id.day_lunar);
-
-        GradientDrawable border = new GradientDrawable();
-        border.setColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
-        border.setCornerRadius(10);
-        border.setStroke(3, ContextCompat.getColor(mContext, R.color.colorPrimary));
-        view.setBackground(border);
-
-        dayTextView.setTextColor(Color.WHITE);
-        dayLunarTextView.setTextColor(Color.WHITE);
-    }
-
-    private void setPrimaryColorBorder(View view) {
-        TextView dayTextView = (TextView) view.findViewById(R.id.day);
-        TextView dayLunarTextView = (TextView) view.findViewById(R.id.day_lunar);
-
-        GradientDrawable border = new GradientDrawable();
-        border.setColor(Color.WHITE);
-        border.setCornerRadius(10);
-        border.setStroke(3, ContextCompat.getColor(mContext, R.color.colorPrimary));
-        view.setBackground(border);
-
-        dayTextView.setTextColor(Color.BLACK);
-        dayLunarTextView.setTextColor(Color.BLACK);
+    public void resetSelectedDays() {
+        if (mLoadCount == 0) {
+            mLoadCount = 1;
+            return;
+        }
+        mLoadCount = 2;
+        if (isCurMonth()) {
+            mSelectedDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        } else {
+            mSelectedDay = 1;
+        }
     }
 
     public int getSelectedPosition() {

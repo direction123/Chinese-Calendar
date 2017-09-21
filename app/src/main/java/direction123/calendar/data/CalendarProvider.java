@@ -39,7 +39,6 @@ public class CalendarProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         Cursor cursor;
-        Log.v("xxxfdfa2", uri.toString());
 
         switch (sUriMatcher.match(uri)) {
             case CODE_MONTH_ALL: {

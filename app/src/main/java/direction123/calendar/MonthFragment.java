@@ -9,6 +9,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -140,7 +141,9 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
                 if (mCurViewPagerFragment != null) {
                     DayGridAdapter dayGridAdapter = mCurViewPagerFragment.getAdapter();
                     dayGridAdapter.swapCursor(data);
+                    dayGridAdapter.resetSelectedDays();
                     int position = dayGridAdapter.getSelectedPosition();
+
                     displayBottomText(dayGridAdapter.getDayModels().get(position));
                     if (dayGridAdapter.isCurMonth()) {
                         mJumpToday.setVisibility(View.INVISIBLE);

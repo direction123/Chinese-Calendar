@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import direction123.calendar.ViewPagerFragment;
@@ -66,6 +67,10 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
                 if (mSelectedYear == Integer.parseInt(Year) && mSelectedMonth == Integer.parseInt(Month)) {
                     mViewPagerFragments.add(new ViewPagerFragment(MonthId, Month, Year, daysInMonth, mSelectedDay, mDayGridOnClickHandler));
+                } else if ((int)Calendar.getInstance().get(Calendar.YEAR) == Integer.parseInt(Year)
+                        && ((int)Calendar.getInstance().get(Calendar.MONTH) + 1) == Integer.parseInt(Month)) {
+                    mViewPagerFragments.add(new ViewPagerFragment(MonthId, Month, Year, daysInMonth,
+                            Calendar.getInstance().get(Calendar.DAY_OF_MONTH), mDayGridOnClickHandler));
                 } else {
                     mViewPagerFragments.add(new ViewPagerFragment(MonthId, Month, Year, daysInMonth, 1, mDayGridOnClickHandler));
                 }
