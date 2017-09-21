@@ -1,6 +1,7 @@
 package direction123.calendar;
 
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ import butterknife.ButterKnife;
 public class SettingsActivity extends AppCompatActivity {
     @BindView(R.id.settings_toolbar)
     Toolbar mToolbar;
+    @BindView(R.id.settings_toolbar_title)
+    TextView mToolbarTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,11 @@ public class SettingsActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Settings");
+        getSupportActionBar().setHomeAsUpIndicator(ContextCompat.getDrawable(this, R.drawable.ic_arrow_back));
+        getSupportActionBar().setTitle(null);
+    }
+
+    public void setActionBarTitle(String title){
+        mToolbarTitle.setText(title);
     }
 }

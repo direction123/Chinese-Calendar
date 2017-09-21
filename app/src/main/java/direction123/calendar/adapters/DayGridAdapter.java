@@ -5,10 +5,12 @@ package direction123.calendar.adapters;
  */
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +38,8 @@ public class DayGridAdapter extends BaseAdapter {
     private int mLastDay;
     private int mLoadCount;
     private List<DayModel> mDayModels = new ArrayList<>();
-
+    // language preferences
+    private String mLangPref;
 
     public void swapCursor(Cursor newCursor) {
         mCursor = newCursor;
@@ -52,6 +55,9 @@ public class DayGridAdapter extends BaseAdapter {
         mSelectedDay = selectedDay;
         mFirstDay = firstDay;
         mLastDay = lastDay;
+        //language preference
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mLangPref = sharedPref.getString(mContext.getResources().getString(R.string.pref_lang_key), "");
     }
 
     @Override
@@ -98,7 +104,7 @@ public class DayGridAdapter extends BaseAdapter {
         if (mDayModels != null && position >= 0 && position < getCount() && mDayModels.get(position) != null) {
             DayModel dayModel = mDayModels.get(position);
             dayTextView.setText(dayModel.getDispTop());
-            dayLunarTextView.setText(dayModel.getDispShort("English"));
+            dayLunarTextView.setText(dayModel.getDispShort(mLangPref));
         }
         GridBackground gridBackground = new GridBackground(mContext);
         if (isCurMonth()) {

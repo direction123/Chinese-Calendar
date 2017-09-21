@@ -66,30 +66,33 @@ public class DayModel {
     }
 
     public String getDispShort(String language) {
-        if (language.equals("English")) {
+        if (language.equals("Simplified Chinese")) {
+            return mDispShortCH;
+        } else {
             return mDispShortENG;
         }
-        return mDispShortCH;
     }
 
     public String getDispYear(String language) {
-        if (language.equals("English")) {
+        if (language.equals("Simplified Chinese")) {
+            return mYearDispCH + " " + mMonthLuna + " " + mDayLuna;
+        } else {
             return "The year of " + mYearDispENG;
         }
-        return mYearDispCH + " " + mMonthLuna + " " + mDayLuna;
     }
     public String getDispLong(String language) {
-        if (language.equals("English")) {
+        if (language.equals("Simplified Chinese")) {
+            return mDispLongCH;
+        } else {
             return mDispLongENG;
         }
-        return mDispLongCH;
     }
 
     public String getFortune(String language) {
-        if (language.equals("English")) {
+        if (language.equals("Simplified Chinese")) {
+            return mFortuneCh[Integer.parseInt(mFortuneId) - 1];
+        } else {
             return mFortuneEn[Integer.parseInt(mFortuneId) - 1];
         }
-        return mFortuneCh[Integer.parseInt(mFortuneId) - 1];
     }
-
 }

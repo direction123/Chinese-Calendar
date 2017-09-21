@@ -1,5 +1,6 @@
 package direction123.calendar;
 
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 
 import android.support.v4.app.Fragment;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,6 +61,9 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
     // Toolbar
     private ImageView mJumpToday;
 
+    // language preferences
+    private String mLangPref;
+
     private static final int ID_MONTH_LOADER = 33;
     private static final int ID_DAYS_LOADER = 34;
 
@@ -83,6 +88,10 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_month, container, false);
         ButterKnife.bind(this, rootView);
+
+        //language preference
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mLangPref = sharedPref.getString(getResources().getString(R.string.pref_lang_key), "");
 
         //args
         Bundle bundle = getArguments();
@@ -200,9 +209,9 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
 
 
     private void displayBottomText(DayModel dayModel) {
-        mDispYearView.setText(dayModel.getDispYear("English"));
-        mDsipLongView.setText(dayModel.getDispLong("English"));
-        mDispFortuneView.setText(dayModel.getFortune("English"));
+        mDispYearView.setText(dayModel.getDispYear(mLangPref));
+        mDsipLongView.setText(dayModel.getDispLong(mLangPref));
+        mDispFortuneView.setText(dayModel.getFortune(mLangPref));
     }
 
     private String getTitle (String month, String year) {
@@ -220,7 +229,11 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
         hashMap.put("11", "November");
         hashMap.put("12", "December");
 
-        return hashMap.get(month) + " " + year;
+        if (mLangPref.equals(getResources().getString(R.string.pref_language_ch_value))) {
+            return year + "年" + month + "月";
+        } else {
+            return hashMap.get(month) + " " + year;
+        }
     }
 
 }

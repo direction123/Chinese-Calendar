@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceScreen;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,20 @@ import android.view.ViewGroup;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements
         SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private void setToolbarTitle() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String langPref = sharedPref.getString(getResources().getString(R.string.pref_lang_key), "");
+        if (langPref.equals(getResources().getString(R.string.pref_language_ch_value))) {
+            ((SettingsActivity) getActivity()).setActionBarTitle(
+                    getResources().getString(R.string.setting_menu_ch)
+            );
+        } else {
+            ((SettingsActivity) getActivity()).setActionBarTitle(
+                    getResources().getString(R.string.setting_menu_en)
+            );
+        }
+    }
 
     private void setPreferenceSummary(Preference preference, Object value) {
         String stringValue = value.toString();
@@ -46,6 +61,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
             if (p instanceof ListPreference) {
                 String value = sharedPreferences.getString(p.getKey(), "");
                 setPreferenceSummary(p, value);
+                setToolbarTitle();
             }
         }
     }
@@ -72,6 +88,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         if (null != preference) {
             if (preference instanceof ListPreference) {
                 setPreferenceSummary(preference, sharedPreferences.getString(key, ""));
+                setToolbarTitle();
             }
         }
     }
