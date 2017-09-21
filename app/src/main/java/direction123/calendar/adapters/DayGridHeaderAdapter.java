@@ -1,6 +1,8 @@
 package direction123.calendar.adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.support.v7.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +19,20 @@ import direction123.calendar.data.DayModel;
  */
 
 public class DayGridHeaderAdapter extends BaseAdapter {
-    private String[] mDays = new String[]{"S","M","T","W","T","F","S"};
+    private String[] mDays;
     private LayoutInflater mInflater;
 
     public DayGridHeaderAdapter(Context context) {
         mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        //language preference
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        String langPref = sharedPref.getString(context.getResources().getString(R.string.pref_lang_key), "");
+        if (langPref.equals("Simplified Chinese")) {
+            mDays = new String[]{"日","一","二","三","四","五","六"};
+        } else {
+            mDays = new String[]{"S","M","T","W","T","F","S"};
+        }
     }
 
     @Override
