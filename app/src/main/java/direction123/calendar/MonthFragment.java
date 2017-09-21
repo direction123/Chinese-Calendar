@@ -1,7 +1,6 @@
 package direction123.calendar;
 
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -10,7 +9,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,17 +18,15 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import direction123.calendar.adapters.DayGridAdapter;
-import direction123.calendar.adapters.DayGridOnClickHandler;
+import direction123.calendar.interfaces.DayGridOnClickHandler;
 import direction123.calendar.adapters.ViewPagerAdapter;
 import direction123.calendar.data.DayContract;
 import direction123.calendar.data.DayModel;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 import direction123.calendar.data.MonthContract;
-import direction123.calendar.interfaces.DatePickerFragmentListener;
 
 
 public class MonthFragment extends Fragment implements ViewPager.OnPageChangeListener,

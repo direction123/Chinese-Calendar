@@ -39,7 +39,7 @@ public class DayModel {
             "Today is 'stagnant' day, which means it is a day lacking of energy and vigour.",
             "Today is 'mataining' day, which means it is better to keep unchanged today.",
             "Today is 'broken' day, which means it is not a good day perform happy event.",
-            "Today is 'dangerous' day， which means it is a day nothing is good to do.",
+            "Today is 'dangerous' day, which means it is a day nothing is good to do.",
             "Today is 'acomplishing' day, which means it is a day everything is good to do.",
             "Today is 'harvesting' day, which means it is a good day to pursue a happy event.",
             "Today is 'opening' day, which means it is good day to start something new.",

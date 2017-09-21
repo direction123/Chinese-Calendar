@@ -1,4 +1,4 @@
-package direction123.calendar.adapters;
+package direction123.calendar.interfaces;
 
 import direction123.calendar.data.DayModel;
 

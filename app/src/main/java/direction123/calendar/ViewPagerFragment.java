@@ -1,23 +1,17 @@
 package direction123.calendar;
 
 import android.annotation.SuppressLint;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 
-import android.util.Log;
 import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -30,7 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import direction123.calendar.adapters.DayGridAdapter;
 import direction123.calendar.adapters.DayGridHeaderAdapter;
-import direction123.calendar.adapters.DayGridOnClickHandler;
+import direction123.calendar.interfaces.DayGridOnClickHandler;
 import direction123.calendar.data.DayModel;
 
 @SuppressLint("ValidFragment")
