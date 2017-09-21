@@ -19,6 +19,8 @@ import android.widget.TextView;
 import java.util.Calendar;
 import java.util.Date;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import direction123.calendar.R;
 import direction123.calendar.interfaces.DatePickerFragmentListener;
 
@@ -29,23 +31,28 @@ import direction123.calendar.interfaces.DatePickerFragmentListener;
 
 public class MainActivity extends AppCompatActivity implements DatePickerFragmentListener{
     // DrawLayout, Navigation Drawer
+    @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
+    @BindView(R.id.drawer_view)
     NavigationView mDrawerView;
-    ActionBarDrawerToggle mDrawerToggle;
-
+    @BindView(R.id.main_toolbar)
     Toolbar mToolbar;
+    @BindView(R.id.main_toolbar_title)
     TextView mTitleTextView;
+    @BindView(R.id.main_toolbar_today)
     ImageView mJumpToday;
+    @BindView(R.id.main_toolbar_drop)
     ImageView mDropIcon;
+
+    ActionBarDrawerToggle mDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         // DrawLayout, Navigation Drawer
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerView = (NavigationView) findViewById(R.id.drawer_view);
         setupDrawerContent(mDrawerView);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,
@@ -103,20 +110,17 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
     }
 
     private void setupToolbar(){
-        mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
 
-        mTitleTextView = (TextView) findViewById(R.id.main_toolbar_title);
         mTitleTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDatePickerDialog();
             }
         });
-        mJumpToday= (ImageView) findViewById(R.id.main_toolbar_today);
         mJumpToday.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -131,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
                         .commit();
             }
         });
-        mDropIcon = (ImageView) findViewById(R.id.main_toolbar_drop);
         mDropIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
