@@ -203,6 +203,7 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
     private void displayBottomText(DayModel dayModel) {
         mDispYearView.setText(dayModel.getDispYear("English"));
         mDsipLongView.setText(dayModel.getDispLong("English"));
+        mDispFortuneView.setText(dayModel.getFortune("English"));
     }
 
     private String getTitle (String month, String year) {

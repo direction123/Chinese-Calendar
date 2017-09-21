@@ -165,9 +165,10 @@ public class DayGridAdapter extends BaseAdapter {
                 String dayLuna = mCursor.getString(mCursor.getColumnIndex("DayLuna"));
                 String dispLongENG = mCursor.getString(mCursor.getColumnIndex("DispLongENG"));
                 String dispLongCH = mCursor.getString(mCursor.getColumnIndex("DispLongCH"));
+                String fortuneId = mCursor.getString(mCursor.getColumnIndex("JcId"));
                 mDayModels.add(new DayModel(dispTop, dispShortENG, dispShortCH,
                         yearDispENG, yearDispCH, monthLuna,
-                        dayLuna, dispLongENG, dispLongCH));
+                        dayLuna, dispLongENG, dispLongCH, fortuneId));
 
                 mCursor.moveToNext();
             }
