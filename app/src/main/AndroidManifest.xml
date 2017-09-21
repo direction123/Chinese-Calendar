@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="direction123.calendar">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".applications.MyApplication"
@@ -12,9 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTop">
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,17 +27,29 @@
         <provider
             android:name=".data.CalendarProvider"
             android:authorities="@string/content_authority"
-            android:exported="false"/>
+            android:exported="false" />
 
-        <activity android:name=".SettingsActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".MainActivity">
+        <activity
+            android:name=".SettingsActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".AboutActivity"
-            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".AboutActivity"
+            android:screenOrientation="portrait" />
+
+        <receiver android:name=".CalendarWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/calendar_widget_info" />
+        </receiver>
     </application>
 
 </manifest>

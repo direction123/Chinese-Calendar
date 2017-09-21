@@ -26,7 +26,7 @@ public class GridBackground {
 
         GradientDrawable border = new GradientDrawable();
         border.setColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
-        border.setCornerRadius(10);
+        border.setCornerRadius(2);
         border.setStroke(3, ContextCompat.getColor(mContext, R.color.colorPrimary));
         view.setBackground(border);
 
@@ -40,7 +40,7 @@ public class GridBackground {
 
         GradientDrawable border = new GradientDrawable();
         border.setColor(Color.WHITE);
-        border.setCornerRadius(10);
+        border.setCornerRadius(2);
         border.setStroke(3, ContextCompat.getColor(mContext, R.color.colorPrimary));
         view.setBackground(border);
 
@@ -54,7 +54,7 @@ public class GridBackground {
 
         GradientDrawable border = new GradientDrawable();
         border.setColor(ContextCompat.getColor(mContext, R.color.colorGreyDarkLight));
-        border.setCornerRadius(10);
+        border.setCornerRadius(2);
         border.setStroke(3, ContextCompat.getColor(mContext, R.color.colorGreyDarkLight));
         view.setBackground(border);
 
