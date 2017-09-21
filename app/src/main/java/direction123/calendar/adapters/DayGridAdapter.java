@@ -99,7 +99,11 @@ public class DayGridAdapter extends BaseAdapter {
             dayLunarTextView.setText(dayModel.getDispShort("English"));
         }
         if (position == getSelectedPosition()) {
-            setPrimaryColorBackground(view);
+            if (isCurMonth()) {
+                setPrimaryColorBackground(view);
+            } else {
+                setPrimaryColorBorder(view);
+            }
         } else {
             setNoSelectedBackground(view);
         }
@@ -129,6 +133,19 @@ public class DayGridAdapter extends BaseAdapter {
         dayLunarTextView.setTextColor(Color.WHITE);
     }
 
+    private void setPrimaryColorBorder(View view) {
+        TextView dayTextView = (TextView) view.findViewById(R.id.day);
+        TextView dayLunarTextView = (TextView) view.findViewById(R.id.day_lunar);
+
+        GradientDrawable border = new GradientDrawable();
+        border.setColor(Color.WHITE);
+        border.setCornerRadius(10);
+        border.setStroke(3, ContextCompat.getColor(mContext, R.color.colorPrimary));
+        view.setBackground(border);
+
+        dayTextView.setTextColor(Color.BLACK);
+        dayLunarTextView.setTextColor(Color.BLACK);
+    }
 
     public int getSelectedPosition() {
         return mSelectedDay + mFirstDay - 1;

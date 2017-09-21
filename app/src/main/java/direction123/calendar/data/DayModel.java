@@ -32,18 +32,18 @@ public class DayModel {
             "今日开日，为开放之义，意开始、开展的日子，适合各种各样事情，办之可成",
             "今日闭日，为坚固之义，关闭、紧闭之意，是日事务宜闭不宜开，宜收不宜放"};
     private String[]  mFortuneEn = {
-            "Today is 'building' day, which means it is a day everything is growing stronger.",
-            "Toay is 'removing' day, which means it is a good day to get rid of old and bad stuff.",
-            "Today is 'happy' day, which means it is a good day to gain joy and happiness.",
-            "Today is 'common' day, which means it is better to stay quiet today.",
-            "Today is 'stagnant' day, which means it is a day lacking of energy and vigour.",
-            "Today is 'mataining' day, which means it is better to keep unchanged today.",
-            "Today is 'broken' day, which means it is not a good day perform happy event.",
-            "Today is 'dangerous' day, which means it is a day nothing is good to do.",
-            "Today is 'acomplishing' day, which means it is a day everything is good to do.",
-            "Today is 'harvesting' day, which means it is a good day to pursue a happy event.",
-            "Today is 'opening' day, which means it is good day to start something new.",
-            "Today is 'closing' day, which means it is a good day to finish something."
+            "This is the 'building' day, which means it is a day everything is growing stronger.",
+            "This is the 'removing' day, which means it is a good day to get rid of old and bad stuff.",
+            "This is the 'happy' day, which means it is a good day to gain joy and happiness.",
+            "This is the 'common' day, which means it is better to stay quiet today.",
+            "This is the 'stagnant' day, which means it is a day lacking of energy and vigour.",
+            "This is the 'mataining' day, which means it is better to keep unchanged today.",
+            "This is the 'broken' day, which means it is not a good day perform happy event.",
+            "This is the 'dangerous' day, which means it is a day nothing is good to do.",
+            "This is the 'acomplishing' day, which means it is a day everything is good to do.",
+            "This is the 'harvesting' day, which means it is a good day to pursue a happy event.",
+            "This is the 'opening' day, which means it is good day to start something new.",
+            "This is the 'closing' day, which means it is a good day to finish something."
     };
 
     public DayModel(String dispTop, String dispShortENG, String dispShortCH,

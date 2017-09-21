@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
 
     @Override
     public void onDateSet(int year, int month, int day) {
-        MonthFragment mFragment = MonthFragment.newInstance(year, month, day);
+        MonthFragment mFragment = MonthFragment.newInstance(year, month + 1, day);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, mFragment)
