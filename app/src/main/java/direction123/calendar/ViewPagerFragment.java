@@ -151,11 +151,15 @@ public class ViewPagerFragment extends Fragment {
 
 
     public String getFirstDayId() {
-        return mDayItems[mFirstDay];
+        if(mDayItems != null)
+            return mDayItems[mFirstDay];
+        return "0";
     }
 
     public String getLastDayId() {
-        return mDayItems[mLastDay];
+        if(mDayItems != null)
+           return mDayItems[mLastDay];
+        return "0";
     }
 
     public DayGridAdapter getAdapter() {
