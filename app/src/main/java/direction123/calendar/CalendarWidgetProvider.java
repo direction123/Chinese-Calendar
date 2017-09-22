@@ -21,7 +21,7 @@ import direction123.calendar.utils.CalendarUtils;
 /**
  * Implementation of App Widget functionality.
  */
-public class CalendarWidget extends AppWidgetProvider {
+public class CalendarWidgetProvider extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
@@ -100,14 +100,14 @@ public class CalendarWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         if(intent.getAction().equals("android.appwidget.action.APPWIDGET_UPDATE")) {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, CalendarWidget.class));
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, CalendarWidgetProvider.class));
             //Trigger data update to handle the GridView widgets and force a data refresh
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_year_month);
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_year_month);
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_year_month);
             //Now update all widgets
             for (int appWidgetId : appWidgetIds) {
-                CalendarWidget.updateAppWidget(context, appWidgetManager, appWidgetId);
+                CalendarWidgetProvider.updateAppWidget(context, appWidgetManager, appWidgetId);
             }
         }
     }

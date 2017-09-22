@@ -41,7 +41,7 @@
             android:name=".AboutActivity"
             android:screenOrientation="portrait" />
 
-        <receiver android:name=".CalendarWidget">
+        <receiver android:name=".CalendarWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
