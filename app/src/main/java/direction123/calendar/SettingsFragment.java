@@ -3,6 +3,7 @@ package direction123.calendar;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -97,15 +98,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
     }
 
     private void updateWidget() {
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getContext());
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(getContext(), CalendarWidget.class));
-        //Trigger data update to handle the GridView widgets and force a data refresh
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_year_month);
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_year_month);
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_year_month);
-        //Now update all widgets
-        for (int appWidgetId : appWidgetIds) {
-            CalendarWidget.updateAppWidget(getContext(), appWidgetManager, appWidgetId);
-        }
+        Intent intent = new Intent();
+        intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
+        getContext().sendBroadcast(intent);
     }
 }

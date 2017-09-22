@@ -3,6 +3,7 @@ package direction123.calendar;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -93,6 +94,22 @@ public class CalendarWidget extends AppWidgetProvider {
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if(intent.getAction().equals("android.appwidget.action.APPWIDGET_UPDATE")) {
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, CalendarWidget.class));
+            //Trigger data update to handle the GridView widgets and force a data refresh
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_year_month);
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_year_month);
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_year_month);
+            //Now update all widgets
+            for (int appWidgetId : appWidgetIds) {
+                CalendarWidget.updateAppWidget(context, appWidgetManager, appWidgetId);
+            }
+        }
     }
 }
 
