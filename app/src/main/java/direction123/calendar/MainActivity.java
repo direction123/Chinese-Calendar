@@ -26,6 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import direction123.calendar.R;
 import direction123.calendar.interfaces.DatePickerFragmentListener;
+import direction123.calendar.utils.SyncUtils;
 
 /**
  * Created by fangxiangwang on 9/7/17.
@@ -54,6 +55,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        // Sync Widget Everyday
+        SyncUtils.CreateDailyRefresh(this);
 
         // DrawLayout, Navigation Drawer
         setupDrawerContent(mDrawerView);
