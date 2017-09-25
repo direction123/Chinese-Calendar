@@ -57,7 +57,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         ButterKnife.bind(this);
 
         // Sync Widget Everyday
-        SyncUtils.CreateDailyRefresh(this);
+        SyncUtils.TriggerRefresh();
+        SyncUtils.CreateSyncAccount(this);
 
         // DrawLayout, Navigation Drawer
         setupDrawerContent(mDrawerView);
