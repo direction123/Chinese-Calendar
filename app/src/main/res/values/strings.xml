@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Chinese Calendar</string>
+    <string name="app_version">v 1.0.0</string>
+    <string name="app_contact">Email: direction.wfx@gmail.com</string>
+
     <string name="nav_settings">Settings</string>
     <string name="nav_about">About me</string>
 
@@ -23,9 +26,4 @@
     <string name="appwidget_text_month">Sep</string>
     <string name="appwidget_text_day">21</string>
     <string name="appwidget_text_luna_day">8/2</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="appwidget_text">EXAMPLE</string>
-    <string name="add_widget">Add widget</string>
 </resources>

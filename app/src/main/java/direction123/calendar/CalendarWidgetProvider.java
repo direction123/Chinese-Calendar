@@ -26,7 +26,6 @@ public class CalendarWidgetProvider extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-        CharSequence widgetText = context.getString(R.string.appwidget_text);
         // Construct the RemoteViews object
         Uri CUR_DAY_URI = DayContract.DayEntry.buildCurrentDay(
                 Calendar.getInstance().get(Calendar.YEAR),
