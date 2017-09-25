@@ -25,7 +25,7 @@ import direction123.calendar.services.GenericAccountService;
 
 public class SyncUtils {
     private final static String TAG = "SyncUtils";
-    private static final long SYNC_FREQUENCY = 60 * 60;  // 1 hour (in seconds)
+    private static final long SYNC_FREQUENCY = 60 * 60;  // in seconds
     private static final String CONTENT_AUTHORITY = DayContract.CONTENT_AUTHORITY;
     private static final String PREF_SETUP_COMPLETE = "setup_complete";
     // Value below must match the account type specified in res/xml/syncadapter.xml

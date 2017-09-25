@@ -5,6 +5,7 @@ import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,6 +61,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             ContentProviderClient provider,
             SyncResult syncResult) {
 
-        Log.v("xxx", "onPerformSync");
+        updateWidget();
+    }
+
+    private void updateWidget() {
+        Intent intent = new Intent();
+        intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
+        getContext().sendBroadcast(intent);
     }
 }

@@ -38,7 +38,6 @@ public class CalendarDbHelper extends SQLiteOpenHelper {
             createDatabase();
             openDataBase();
         } catch (IOException mIOException) {
-            Log.e(TAG, mIOException.toString() + "  UnableToCreateDatabase");
             throw new Error("UnableToCreateDatabase");
         }
     }
@@ -50,7 +49,6 @@ public class CalendarDbHelper extends SQLiteOpenHelper {
             this.close();
             try {
                 copyDatabase();
-                Log.e(TAG, "createDatabase database created");
             } catch (IOException mIOException) {
                 throw new Error("ErrorCopyingDataBase");
             }
@@ -69,7 +67,6 @@ public class CalendarDbHelper extends SQLiteOpenHelper {
         byte[] mBuffer = new byte[1024];
         int mLength;
         while ((mLength = mInput.read(mBuffer))>0) {
-            Log.e(TAG, String.valueOf(mLength));
             mOutput.write(mBuffer, 0, mLength);
         }
         mOutput.flush();
