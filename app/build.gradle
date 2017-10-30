@@ -5,7 +5,7 @@ android {
         config {
             keyAlias 'ChineseCalendarKey'
             keyPassword 'DDxxcoding123'
-            storeFile file('/Users/fangxiangwang/Sites/keystores/chinesecalendar.jks')
+            storeFile file('/Users/fangxiangwang/Sites/ChineseCalendar/chinese-calendar-android/chinesecalendar.jks')
             storePassword 'DDxxcoding123'
         }
     }
