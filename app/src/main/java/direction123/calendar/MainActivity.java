@@ -19,6 +19,8 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
     ImageView mDropIcon;
 
     private ActionBarDrawerToggle mDrawerToggle;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +95,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, mFragment)
                 .commit();
+
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
     @Override
