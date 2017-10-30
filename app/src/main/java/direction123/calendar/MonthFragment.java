@@ -20,6 +20,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,6 +66,9 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
     TextView mDispQuoteView;
     @BindView(R.id.disp_quote_author)
     TextView mDispQuoteAuthorView;
+    @BindView(R.id.adView)
+    AdView mAdView;
+
 
     // date
     private int mSelectedYear;
@@ -129,6 +136,12 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
         if (mLangPref.equals(getResources().getString(R.string.pref_language_en_value))) {
             new FetchQuoteTask().execute();
         }
+
+        // load ad
+        MobileAds.initialize(getContext(),
+                "ca-app-pub-6007220938739284/1131306086");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
         return rootView;
     }
 
