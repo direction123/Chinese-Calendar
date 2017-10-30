@@ -41,10 +41,10 @@
                         android:id="@+id/main_toolbar_drop"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toRightOf="@+id/main_toolbar_title"
+                        android:layout_toEndOf="@+id/main_toolbar_title"
                         android:src="@drawable/ic_arrow_drop"
                         android:baselineAlignBottom="true"
-                        android:paddingLeft="@dimen/padding_xs"
+                        android:paddingStart="@dimen/padding_xs"
                         android:contentDescription="@string/drawer_description"
                         />
 
@@ -52,8 +52,8 @@
                         android:id="@+id/main_toolbar_today"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:paddingRight="@dimen/padding_xl"
+                        android:layout_alignParentEnd="true"
+                        android:paddingEnd="@dimen/padding_xl"
                         android:src="@drawable/ic_event_note"
                         android:paddingTop="@dimen/padding_xs"
                         android:paddingBottom="@dimen/padding_xs"
