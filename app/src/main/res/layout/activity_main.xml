@@ -45,6 +45,7 @@
                         android:src="@drawable/ic_arrow_drop"
                         android:baselineAlignBottom="true"
                         android:paddingLeft="@dimen/padding_xs"
+                        android:contentDescription="@string/drawer_description"
                         />
 
                     <ImageView
@@ -56,6 +57,7 @@
                         android:src="@drawable/ic_event_note"
                         android:paddingTop="@dimen/padding_xs"
                         android:paddingBottom="@dimen/padding_xs"
+                        android:contentDescription="@string/today_description"
                         />
                 </RelativeLayout >
 
