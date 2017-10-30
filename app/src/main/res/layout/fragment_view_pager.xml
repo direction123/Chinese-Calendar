@@ -10,12 +10,12 @@
         android:layout_height="wrap_content"
         android:listSelector="@android:color/transparent"
         android:numColumns="7"
-        android:horizontalSpacing="8dp"
-        android:verticalSpacing="8dp"
+        android:horizontalSpacing="@dimen/padding_s"
+        android:verticalSpacing="@dimen/padding_s"
         android:gravity="center"
         android:stretchMode="columnWidth"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"/>
+        android:paddingTop="@dimen/padding_m"
+        android:paddingBottom="@dimen/padding_m"/>
 
    <GridView
         android:id="@+id/gridView"
@@ -23,12 +23,12 @@
         android:layout_height="wrap_content"
         android:listSelector="@android:color/transparent"
         android:numColumns="7"
-        android:horizontalSpacing="8dp"
-        android:verticalSpacing="8dp"
+        android:horizontalSpacing="@dimen/padding_s"
+        android:verticalSpacing="@dimen/padding_s"
         android:gravity="center"
         android:stretchMode="columnWidth"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"/>
+        android:paddingTop="@dimen/padding_m"
+        android:paddingBottom="@dimen/padding_m"/>
  </LinearLayout>
 
 

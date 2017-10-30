@@ -10,8 +10,8 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/appwidget_text_month"
         android:text="@string/appwidget_text_month"
-        android:textColor="#ffffff"
-        android:textSize="15sp"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/text_size_16"
         android:textAlignment="center"
         />
 
@@ -23,7 +23,7 @@
         android:layout_below="@+id/widget_year_month"
         android:text="@string/appwidget_text_day"
         android:textColor="#ffffff"
-        android:textSize="28sp"
+        android:textSize="@dimen/text_size_28"
         android:textAlignment="center" />
 
     <TextView
@@ -33,9 +33,9 @@
         android:contentDescription="@string/appwidget_text_luna_day"
         android:layout_below="@+id/widget_day"
         android:text="@string/appwidget_text_luna_day"
-        android:background="#fff"
-        android:textColor="#000"
-        android:textSize="12sp"
+        android:background="@color/colorWhite"
+        android:textColor="@color/colorBlack"
+        android:textSize="@dimen/text_size_12"
         android:gravity="center"
         android:layout_centerHorizontal="true"  />
 

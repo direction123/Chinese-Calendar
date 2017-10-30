@@ -1,5 +1,7 @@
 package direction123.calendar;
 
+import android.os.AsyncTask;
+
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -18,6 +20,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import direction123.calendar.adapters.DayGridAdapter;
@@ -26,11 +32,14 @@ import direction123.calendar.adapters.ViewPagerAdapter;
 import direction123.calendar.data.DayContract;
 import direction123.calendar.data.DayModel;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import direction123.calendar.data.MonthContract;
 import direction123.calendar.utils.CalendarUtils;
+import direction123.calendar.utils.NetworkUtils;
 
 
 public class MonthFragment extends Fragment implements ViewPager.OnPageChangeListener,
@@ -49,6 +58,10 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
     TextView mDsipLongView;
     @BindView(R.id.disp_fortune)
     TextView mDispFortuneView;
+    @BindView(R.id.disp_quote)
+    TextView mDispQuoteView;
+    @BindView(R.id.disp_quote_author)
+    TextView mDispQuoteAuthorView;
 
     // date
     private int mSelectedYear;
@@ -111,6 +124,11 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
 
         // Toolbar jumpTpday
         mJumpToday = (ImageView) ((MainActivity) getActivity()).findViewById(R.id.main_toolbar_today);
+
+        // load quote
+        if (mLangPref.equals(getResources().getString(R.string.pref_language_en_value))) {
+            new FetchQuoteTask().execute();
+        }
         return rootView;
     }
 
@@ -225,4 +243,44 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
         }
     }
 
+    class FetchQuoteTask extends AsyncTask<String, Void, String> {
+
+        public FetchQuoteTask () {
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            URL quoteOfDayUrl = NetworkUtils.buildQuoteOfDayUrl();
+            try {
+                String quoteOfDayResponse = NetworkUtils.getResponseFromHttpUrl(quoteOfDayUrl);
+                return quoteOfDayResponse;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String quoteOfDayData) {
+            if (quoteOfDayData != null) {
+                try {
+                    JSONObject quoteOfDayJson = new JSONObject(quoteOfDayData);
+                    if (quoteOfDayJson.getJSONObject("success") != null) {
+                        JSONArray quoteArray = quoteOfDayJson.getJSONObject("contents")
+                                .getJSONArray("quotes");
+                        mDispQuoteView.setText(quoteArray.getJSONObject(0).getString("quote"));
+                        mDispQuoteAuthorView.setText("---- " + quoteArray.getJSONObject(0).getString("author"));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
 }
