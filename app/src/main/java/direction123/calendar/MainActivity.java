@@ -36,6 +36,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,6 +49,7 @@ import direction123.calendar.data.DayContract;
 import direction123.calendar.data.MonthContract;
 import direction123.calendar.interfaces.DatePickerFragmentListener;
 import direction123.calendar.ui.MonthViewPagerFragment;
+import direction123.calendar.utils.CalendarUtils;
 import direction123.calendar.utils.SyncUtils;
 
 /**
@@ -58,6 +60,13 @@ import direction123.calendar.utils.SyncUtils;
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener,
         android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor>{
+    //DrawLayout, Navigation Drawer
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+    @BindView(R.id.drawer_view)
+    NavigationView mDrawerView;
+
+    //Toolbar
     @BindView(R.id.main_toolbar)
     Toolbar mToolbar;
     @BindView(R.id.main_toolbar_back)
@@ -71,8 +80,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     @BindView(R.id.main_toolbar_drop)
     ImageView mDropIcon;
 
+    //days grid
     @BindView(R.id.grid_view_main)
     GridView mGridView;
+
+    // language preferences
+    private String mLangPref;
 
     final static String DEBUG_TAG = "DEBUG_TAG xxdd";
     private ActionBarDrawerToggle mDrawerToggle;
@@ -85,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     private static final String ARG_POSITION = "position";
     private static final int ID_MONTH_DAYS_LOADER = 35;
-
+    private static final int MONTH_COUNT = 2388;
     private DaysGridAdapter mDaysGridAdapter;
 
     @Override
@@ -94,12 +107,19 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        //init current month index
+        mSelectedMonthIndex = getCurrentMonthItemID();
+
+        //get language preference
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        mLangPref = sharedPref.getString(getResources().getString(R.string.pref_lang_key), "");
+
         // Sync Widget
         // SyncUtils.TriggerRefresh();
         SyncUtils.CreateSyncAccount(this);
 
         // DrawLayout, Navigation Drawer
-       /* setupDrawerContent(mDrawerView);
+        setupDrawerContent(mDrawerView);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,
                 mDrawerLayout,
@@ -117,58 +137,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             }
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
-        updateMenuTitles();*/
+        updateDrawerMenuTitles();
         setupToolbar();
-
-        gestureDetector=new GestureDetector(this,new OnSwipeListener(){
-
-            @Override
-            public boolean onSwipe(Direction direction) {
-                if (direction==Direction.left){
-                    //do your stuff
-                    Log.d(DEBUG_TAG, "onSwipe: to left");
-
-                }
-
-                if (direction==Direction.right){
-                    //do your stuff
-                    Log.d(DEBUG_TAG, "onSwipe: to right");
-                }
-                return true;
-            }
-
-
-        });
-
-        // ViewPager
-      /*  mMonthViewPagerAdapter = new MonthViewPagerAdapter(getSupportFragmentManager());
-        mMonthViewViewPager.setAdapter(mMonthViewPagerAdapter);
-        int id = getCurrentMonthItemID();
-        mMonthViewViewPager.setCurrentItem(getCurrentMonthItemID()); */
-        mSelectedMonthIndex = getCurrentMonthItemID();
-
-       /* FragmentManager fragmentManager = getSupportFragmentManager();
-        MonthViewPagerFragment monthViewPagerFragment = MonthViewPagerFragment.newInstance(mSelectedMonthIndex);
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, monthViewPagerFragment)
-                .commit(); */
-
-        mMonthNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSelectedMonthIndex--;
-                Log.v("xxdd", mSelectedMonthIndex + "");
-              //  getSupportLoaderManager().initLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
-                getSupportLoaderManager().restartLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
-
-
-               /* FragmentManager fragmentManager = getSupportFragmentManager();
-                MonthViewPagerFragment monthViewPagerFragment = MonthViewPagerFragment.newInstance(mSelectedMonthIndex);
-                fragmentManager.beginTransaction()
-                        .replace(R.id.content_frame, monthViewPagerFragment)
-                        .commit(); */
-            }
-        });
 
         //grid view
         mDaysGridAdapter = new DaysGridAdapter(this);
@@ -226,8 +196,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     protected void onResume() {
         super.onResume();
-        // Menu
-        updateMenuTitles();
+        // Draw Menu
+        updateDrawerMenuTitles();
     }
 
     @Override
@@ -242,11 +212,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
 
-
-
-
-    private void updateMenuTitles() {
-      /*  MenuItem settingItem = mDrawerView.getMenu().findItem(R.id.nav_setting_fragment);
+    private void updateDrawerMenuTitles() {
+        MenuItem settingItem = mDrawerView.getMenu().findItem(R.id.nav_setting_fragment);
         MenuItem aboutItem = mDrawerView.getMenu().findItem(R.id.nav_about_fragment);
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -257,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         } else {
             settingItem.setTitle(getResources().getString(R.string.setting_menu_en));
             aboutItem.setTitle(getResources().getString(R.string.about_menu_en));
-        } */
+        }
     }
 
     /**
@@ -277,10 +244,35 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
 
+        setToolBarTitle();
+
         mTitleTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDatePickerDialog();
+            }
+        });
+        mMonthNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSelectedMonthIndex++;
+                Log.v("xxdd", mSelectedMonthIndex + "");
+
+                if(mSelectedMonthIndex <= MONTH_COUNT) {
+                    getSupportLoaderManager().restartLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
+                    setToolBarTitle();
+                }
+            }
+        });
+        mMonthBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSelectedMonthIndex--;
+                Log.v("xxdd", mSelectedMonthIndex + "");
+                if(mSelectedMonthIndex > 0) {
+                    getSupportLoaderManager().restartLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
+                    setToolBarTitle();
+                }
             }
         });
         mJumpToday.setOnClickListener(new View.OnClickListener(){
@@ -299,6 +291,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     public void setActionBarTitle(String title){
         mTitleTextView.setText(title);
+    }
+
+    public void setToolBarTitle(){
+        mTitleTextView.setText(getToolbarTitle());
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -324,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 break;
         }
         // Close the navigation drawer
-        //mDrawerLayout.closeDrawers();
+        mDrawerLayout.closeDrawers();
     }
 
     public void showDatePickerDialog() {
@@ -339,10 +335,24 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     private int getYear() {
-        return mSelectedMonthIndex/12 + 1901;
+        return (mSelectedMonthIndex - 1)/12 + 1901;
     }
     private int getMonth() {
-        return mSelectedMonthIndex - 12 * (mSelectedMonthIndex/12);
+        return mSelectedMonthIndex - 12 * (getYear() - 1901);
+    }
+
+    private String getToolbarTitle() {
+        String year = String.valueOf(getYear());
+        String month = String.valueOf(getMonth());
+
+        Log.v("xxx getToolbarTitle", mSelectedMonthIndex + ", " + year + ", " + month);
+        Map<String, String> hashMap = new CalendarUtils().getMonthMapping();
+
+        if (mLangPref.equals(getResources().getString(R.string.pref_language_ch_value))) {
+            return year + "年" + month + "月";
+        } else {
+            return hashMap.get(month) + " " + year;
+        }
     }
 }
 
