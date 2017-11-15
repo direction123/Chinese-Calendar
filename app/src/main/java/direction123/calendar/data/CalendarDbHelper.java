@@ -20,7 +20,7 @@ import java.io.OutputStream;
 public class CalendarDbHelper extends SQLiteOpenHelper {
     private static String TAG = "CalendarDbHelper";
     private static String DB_PATH = "";
-    private static String DB_NAME = "calendarv22.db";
+    private static String DB_NAME = "calendarv23.db";
 
     private SQLiteDatabase mDataBase;
     private final Context mContext;

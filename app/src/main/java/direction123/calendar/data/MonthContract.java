@@ -21,5 +21,12 @@ public class MonthContract {
                 .build();
 
         public static final String TABLE_NAME = "Month";
+
+        public static Uri buildMonthUriWithYearMonth(int year, int month) {
+            return CONTENT_URI.buildUpon()
+                    .appendPath(String.valueOf(year))
+                    .appendPath(String.valueOf(month))
+                    .build();
+        }
     }
 }

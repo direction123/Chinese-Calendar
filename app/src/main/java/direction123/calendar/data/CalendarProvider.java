@@ -20,6 +20,11 @@ public class CalendarProvider extends ContentProvider {
     private CalendarDbHelper mOpenHelper;
 
     public static final int CODE_MONTH_ALL = 100;
+    public static final int CODE_DAY_MODELS_MONTH = 103;
+
+    public static final int CODE_MONTH_DAY_MODELS= 104;
+
+
     public static final int CODE_DAYS_ONE_MONTH = 101;
     public static final int CODE_CURRENT_DAY = 102;
 
@@ -27,6 +32,11 @@ public class CalendarProvider extends ContentProvider {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
 
         matcher.addURI(MonthContract.CONTENT_AUTHORITY, MonthContract.PATH_MONTH, CODE_MONTH_ALL);
+        matcher.addURI(MonthContract.CONTENT_AUTHORITY, MonthContract.PATH_MONTH + "/#", CODE_DAY_MODELS_MONTH);
+
+        matcher.addURI(MonthContract.CONTENT_AUTHORITY, MonthContract.PATH_MONTH + "/#/#", CODE_MONTH_DAY_MODELS);
+
+
         matcher.addURI(DayContract.CONTENT_AUTHORITY, DayContract.PATH_DAY, CODE_DAYS_ONE_MONTH);
         matcher.addURI(DayContract.CONTENT_AUTHORITY, DayContract.PATH_DAY + "/#" + "/#" + "/#", CODE_CURRENT_DAY);
 
@@ -78,6 +88,19 @@ public class CalendarProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
+                break;
+            }
+            case CODE_MONTH_DAY_MODELS: {
+                List<String> dates = uri.getPathSegments();
+                String year = dates.get(1);
+                String month = dates.get(2);
+
+                String queryString =
+                        "SELECT * FROM Month LEFT JOIN Days ON Month.DaysInMonth = Days.DayId" +
+                                " WHERE Month.Year = " + year +" AND Month.Month = " + month;
+                Log.v("xxx provider", queryString);
+                cursor = mOpenHelper.getReadableDatabase().rawQuery(queryString, null);
+                Log.v("xx cursor", (cursor == null) + "");
                 break;
             }
             default:
