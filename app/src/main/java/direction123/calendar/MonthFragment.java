@@ -206,9 +206,9 @@ public class MonthFragment extends Fragment implements ViewPager.OnPageChangeLis
     public void onPageSelected(int position) {
         mCurViewPagerFragment = (ViewPagerFragment) mViewPagerAdapter.getItem(position);
         if (mCurViewPagerFragment != null) {
-            ((MainActivity) getActivity()).setActionBarTitle(
+           /* ((MainActivity) getActivity()).setActionBarTitle(
                     getTitle(mCurViewPagerFragment.getCurMonth(),
-                    mCurViewPagerFragment.getCurYear()));
+                    mCurViewPagerFragment.getCurYear())); */
 
             String firstDayId = mCurViewPagerFragment.getFirstDayId();
             String lastDayId = mCurViewPagerFragment.getLastDayId();

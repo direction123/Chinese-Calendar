@@ -6,6 +6,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,8 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import direction123.calendar.R;
+import direction123.calendar.adapters.MonthViewPagerAdapter;
+import direction123.calendar.adapters.ViewPagerAdapter;
 import direction123.calendar.interfaces.DatePickerFragmentListener;
 import direction123.calendar.utils.SyncUtils;
 
@@ -35,7 +38,7 @@ import direction123.calendar.utils.SyncUtils;
  */
 
 
-public class MainActivity extends AppCompatActivity implements DatePickerFragmentListener{
+public class MainActivity extends AppCompatActivity {
     // DrawLayout, Navigation Drawer
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
@@ -49,9 +52,13 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
     ImageView mJumpToday;
     @BindView(R.id.main_toolbar_drop)
     ImageView mDropIcon;
+    @BindView(R.id.pager)
+    ViewPager mMonthViewViewPager;
 
     private ActionBarDrawerToggle mDrawerToggle;
     private FirebaseAnalytics mFirebaseAnalytics;
+
+    private MonthViewPagerAdapter mMonthViewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,62 +66,15 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        // Sync Widget
-        // SyncUtils.TriggerRefresh();
-        SyncUtils.CreateSyncAccount(this);
-
-        // DrawLayout, Navigation Drawer
-        setupDrawerContent(mDrawerView);
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,
-                mDrawerLayout,
-                R.string.drawer_open, R.string.drawer_close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu();
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                invalidateOptionsMenu();
-            }
-        };
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
-        updateMenuTitles();
-        setupToolbar();
-
-        // Fragment
-        Calendar c = Calendar.getInstance();
-        MonthFragment mFragment = MonthFragment.newInstance(
-                c.get(Calendar.YEAR),
-                c.get(Calendar.MONTH) + 1,
-                c.get(Calendar.DAY_OF_MONTH));
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, mFragment)
-                .commit();
-
-        // Obtain the FirebaseAnalytics instance.
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mMonthViewPagerAdapter = new MonthViewPagerAdapter(getSupportFragmentManager());
+        mMonthViewViewPager.setAdapter(mMonthViewPagerAdapter);
+        mMonthViewViewPager.setCurrentItem(1422);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         // Menu
-        updateMenuTitles();
-        // Fragment
-        Calendar c = Calendar.getInstance();
-        MonthFragment mFragment = MonthFragment.newInstance(
-                c.get(Calendar.YEAR),
-                c.get(Calendar.MONTH) + 1,
-                c.get(Calendar.DAY_OF_MONTH));
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, mFragment)
-                .commit();
     }
 
     @Override
@@ -125,22 +85,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
-    }
-
-    private void updateMenuTitles() {
-        MenuItem settingItem = mDrawerView.getMenu().findItem(R.id.nav_setting_fragment);
-        MenuItem aboutItem = mDrawerView.getMenu().findItem(R.id.nav_about_fragment);
-
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String langPref = sharedPref.getString(getResources().getString(R.string.pref_lang_key), "");
-        if (langPref.equals(getResources().getString(R.string.pref_language_ch_value))) {
-            settingItem.setTitle(getResources().getString(R.string.setting_menu_ch));
-            aboutItem.setTitle(getResources().getString(R.string.about_menu_ch));
-        } else {
-            settingItem.setTitle(getResources().getString(R.string.setting_menu_en));
-            aboutItem.setTitle(getResources().getString(R.string.about_menu_en));
-        }
     }
 
     /**
@@ -152,84 +96,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void setupToolbar(){
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(null);
-
-        mTitleTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
-        });
-        mJumpToday.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Calendar c = Calendar.getInstance();
-                MonthFragment mFragment = MonthFragment.newInstance(
-                        c.get(Calendar.YEAR),
-                        c.get(Calendar.MONTH) + 1,
-                        c.get(Calendar.DAY_OF_MONTH));
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.content_frame, mFragment)
-                        .commit();
-            }
-        });
-        mDropIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
-        });
-    }
-
-    public void setActionBarTitle(String title){
-        mTitleTextView.setText(title);
-    }
-
-    private void setupDrawerContent(NavigationView navigationView) {
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        selectDrawerItem(menuItem);
-                        return true;
-                    }
-                });
-    }
-
-    public void selectDrawerItem(MenuItem menuItem) {
-        switch(menuItem.getItemId()) {
-            case R.id.nav_setting_fragment:
-                Intent i = new Intent(this, SettingsActivity.class);
-                startActivity(i);
-                break;
-            case R.id.nav_about_fragment:
-                i = new Intent(this, AboutActivity.class);
-                startActivity(i);
-                break;
-        }
-        // Close the navigation drawer
-        mDrawerLayout.closeDrawers();
-    }
-
-    public void showDatePickerDialog() {
-        DatePickerFragment dFragment = DatePickerFragment.newInstance(this);
-        dFragment.show(getSupportFragmentManager(), "datePicker");
-    }
-
-    @Override
-    public void onDateSet(int year, int month, int day) {
-        MonthFragment mFragment = MonthFragment.newInstance(year, month + 1, day);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, mFragment)
-                .commit();
     }
 }
 
