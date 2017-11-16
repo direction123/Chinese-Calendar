@@ -59,7 +59,8 @@ import direction123.calendar.utils.SyncUtils;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener,
-        android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor>{
+        android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor>,
+        DatePickerFragmentListener {
     //DrawLayout, Navigation Drawer
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
@@ -77,8 +78,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     ImageView mMonthNext;
     @BindView(R.id.main_toolbar_today)
     ImageView mJumpToday;
-    @BindView(R.id.main_toolbar_drop)
-    ImageView mDropIcon;
 
     //days grid
     @BindView(R.id.grid_view_main)
@@ -281,12 +280,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
             }
         });
-        mDropIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
-        });
     }
 
     public void setActionBarTitle(String title){
@@ -324,7 +317,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     public void showDatePickerDialog() {
-
+        DatePickerFragment dFragment = DatePickerFragment.newInstance(this);
+        dFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
     private int getCurrentMonthItemID() {
@@ -354,6 +348,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             return hashMap.get(month) + " " + year;
         }
     }
+
+    @Override
+    public void onDateSet(int year, int month, int day) {
+
+    }
+
 }
 
 
