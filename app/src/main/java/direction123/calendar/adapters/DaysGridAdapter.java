@@ -32,6 +32,7 @@ public class DaysGridAdapter extends BaseAdapter{
     private List<DayModel> mDayModels = new ArrayList<>();
     private int mSelectedYear;
     private int mSelectedMonth;
+    private int mSelectedDay;
 
     private String mLangPref;
 
@@ -55,9 +56,10 @@ public class DaysGridAdapter extends BaseAdapter{
         return mDayModels.size();
     }
 
-    public void setDate(int year, int month) {
+    public void setDate(int year, int month, int day) {
         mSelectedYear = year;
         mSelectedMonth = month;
+        mSelectedDay = day;
     }
 
     @Override

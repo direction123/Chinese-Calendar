@@ -82,6 +82,9 @@ public class MainActivity extends AppCompatActivity implements
     private ActionBarDrawerToggle mDrawerToggle;
     private FirebaseAnalytics mFirebaseAnalytics;
 
+    private int mSelectedYear;
+    private int mSelectedMonth;
+    private int mSelectedDay;
     private int mSelectedMonthIndex;
 
     private static final String ARG_POSITION = "position";
@@ -95,8 +98,11 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        //init current month index
-        mSelectedMonthIndex = getCurrentMonthItemID();
+        //init current date
+        mSelectedYear = Calendar.getInstance().get(Calendar.YEAR);
+        mSelectedMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+        mSelectedDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        mSelectedMonthIndex = (mSelectedYear - 1901)*12 + mSelectedMonth;
 
         //get language preference
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -126,6 +132,8 @@ public class MainActivity extends AppCompatActivity implements
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         updateDrawerMenuTitles();
+
+        //toolbar
         setupToolbar();
 
         //grid view
@@ -140,8 +148,6 @@ public class MainActivity extends AppCompatActivity implements
                 mDispFortuneView.setText(dayModel.getFortune(mLangPref));
             }
         });
-        mDaysGridAdapter.setDate(getYear(), getMonth());
-        mDaysGridAdapter.notifyDataSetChanged();
 
         // Loader
         getSupportLoaderManager().initLoader(ID_MONTH_DAYS_LOADER, null, this);
@@ -150,12 +156,66 @@ public class MainActivity extends AppCompatActivity implements
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
+    private void setupToolbar(){
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(null);
+
+        mTitleTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });
+        mMonthNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSelectedMonthIndex++;
+                mSelectedYear = (mSelectedMonthIndex - 1)/12 + 1901;
+                mSelectedMonth = mSelectedMonthIndex - 12 * (mSelectedYear - 1901);
+                if(!isCurrentMonth()) {
+                    mSelectedDay = 1;
+                }
+                if(mSelectedMonthIndex <= MONTH_COUNT) {
+                    getSupportLoaderManager().restartLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
+                }
+            }
+        });
+        mMonthBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSelectedMonthIndex--;
+                mSelectedYear = (mSelectedMonthIndex - 1)/12 + 1901;
+                mSelectedMonth = mSelectedMonthIndex - 12 * (mSelectedYear - 1901);
+                if(!isCurrentMonth()) {
+                    mSelectedDay = 1;
+                }
+                if(mSelectedMonthIndex > 0) {
+                    getSupportLoaderManager().restartLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
+                }
+            }
+        });
+        mJumpToday.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+    private boolean isCurrentMonth() {
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        int month = Calendar.getInstance().get(Calendar.MONTH) + 1;
+        return mSelectedYear == year && mSelectedMonth == month;
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case ID_MONTH_DAYS_LOADER:
                 Uri getAllDaysUri = MonthContract.MonthEntry
-                        .buildMonthUriWithYearMonth(getYear(), getMonth());
+                        .buildMonthUriWithYearMonth(mSelectedYear, mSelectedMonth);
                 return new CursorLoader(this,
                         getAllDaysUri,
                         null,
@@ -171,10 +231,35 @@ public class MainActivity extends AppCompatActivity implements
         switch (loader.getId()) {
             case ID_MONTH_DAYS_LOADER: {
                 mDaysGridAdapter.swapCursor(data);
+                mDaysGridAdapter.setDate(mSelectedYear, mSelectedMonth, mSelectedDay);
+                mDaysGridAdapter.notifyDataSetChanged();
+                //update ui
+                updateUI();
                 break;
             }
         }
     }
+
+    private void updateUI() {
+        //toolbar title
+        String toolBarTitle;
+        Map<String, String> hashMap = new CalendarUtils().getMonthMapping();
+        if (mLangPref.equals(getResources().getString(R.string.pref_language_ch_value))) {
+            toolBarTitle = mSelectedYear + "年" + mSelectedMonth + "月";
+        } else {
+            toolBarTitle = hashMap.get(String.valueOf(mSelectedMonth)) + " " + mSelectedYear;
+        }
+        mTitleTextView.setText(toolBarTitle);
+        //bottom text
+        int position = mSelectedDay + mDaysGridAdapter.getFirstDayIndex() - 1;
+        DayModel dayModel = (DayModel) mDaysGridAdapter.getItem(position);
+        if(dayModel != null) {
+            mDispYearView.setText(dayModel.getDispYear(mLangPref));
+            mDsipLongView.setText(dayModel.getDispLong(mLangPref));
+            mDispFortuneView.setText(dayModel.getFortune(mLangPref));
+        }
+    }
+
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
@@ -197,7 +282,6 @@ public class MainActivity extends AppCompatActivity implements
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
     }
-
 
     private void updateDrawerMenuTitles() {
         MenuItem settingItem = mDrawerView.getMenu().findItem(R.id.nav_setting_fragment);
@@ -223,60 +307,6 @@ public class MainActivity extends AppCompatActivity implements
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void setupToolbar(){
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(null);
-
-        setToolBarTitle();
-
-        mTitleTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
-        });
-        mMonthNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSelectedMonthIndex++;
-                if(mSelectedMonthIndex <= MONTH_COUNT) {
-                    getSupportLoaderManager().restartLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
-                    setToolBarTitle();
-                    mDaysGridAdapter.setDate(getYear(), getMonth());
-                    mDaysGridAdapter.notifyDataSetChanged();
-                }
-            }
-        });
-        mMonthBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSelectedMonthIndex--;
-                if(mSelectedMonthIndex > 0) {
-                    getSupportLoaderManager().restartLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
-                    setToolBarTitle();
-                    mDaysGridAdapter.setDate(getYear(), getMonth());
-                    mDaysGridAdapter.notifyDataSetChanged();
-                }
-            }
-        });
-        mJumpToday.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-    }
-
-    public void setActionBarTitle(String title){
-        mTitleTextView.setText(title);
-    }
-
-    public void setToolBarTitle(){
-        mTitleTextView.setText(getToolbarTitle());
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -308,34 +338,6 @@ public class MainActivity extends AppCompatActivity implements
     public void showDatePickerDialog() {
         DatePickerFragment dFragment = DatePickerFragment.newInstance(this);
         dFragment.show(getSupportFragmentManager(), "datePicker");
-    }
-
-    private int getCurrentMonthItemID() {
-        Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH) + 1;
-        return (year - 1901) * 12 + month;
-    }
-
-    private int getYear() {
-        return (mSelectedMonthIndex - 1)/12 + 1901;
-    }
-    private int getMonth() {
-        return mSelectedMonthIndex - 12 * (getYear() - 1901);
-    }
-
-    private String getToolbarTitle() {
-        String year = String.valueOf(getYear());
-        String month = String.valueOf(getMonth());
-
-        Log.v("xxx getToolbarTitle", mSelectedMonthIndex + ", " + year + ", " + month);
-        Map<String, String> hashMap = new CalendarUtils().getMonthMapping();
-
-        if (mLangPref.equals(getResources().getString(R.string.pref_language_ch_value))) {
-            return year + "年" + month + "月";
-        } else {
-            return hashMap.get(month) + " " + year;
-        }
     }
 
     @Override
