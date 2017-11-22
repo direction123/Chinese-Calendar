@@ -155,4 +155,8 @@ public class DaysGridAdapter extends BaseAdapter{
         }
         return -1;
     }
+
+    public List<DayModel> getDayModel() {
+        return mDayModels;
+    }
 }
