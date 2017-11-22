@@ -240,7 +240,11 @@ public class MainActivity extends AppCompatActivity implements
         mJumpToday.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-
+                mSelectedYear = Calendar.getInstance().get(Calendar.YEAR);
+                mSelectedMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+                mSelectedDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+                mSelectedMonthIndex = (mSelectedYear - 1901)*12 + mSelectedMonth;
+                getSupportLoaderManager().restartLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
             }
         });
     }
@@ -298,6 +302,12 @@ public class MainActivity extends AppCompatActivity implements
             mDispYearView.setText(dayModel.getDispYear(mLangPref));
             mDsipLongView.setText(dayModel.getDispLong(mLangPref));
             mDispFortuneView.setText(dayModel.getFortune(mLangPref));
+        }
+        //jump to today
+        if (isCurrentMonth()) {
+            mJumpToday.setVisibility(View.INVISIBLE);
+        } else {
+            mJumpToday.setVisibility(View.VISIBLE);
         }
     }
 
