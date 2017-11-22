@@ -5,14 +5,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,34 +15,24 @@ import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import direction123.calendar.R;
-import direction123.calendar.adapters.DayGridAdapter;
 import direction123.calendar.adapters.DaysGridAdapter;
-import direction123.calendar.adapters.MonthViewPagerAdapter;
-import direction123.calendar.adapters.ViewPagerAdapter;
-import direction123.calendar.data.DayContract;
+import direction123.calendar.data.DayModel;
 import direction123.calendar.data.MonthContract;
 import direction123.calendar.interfaces.DatePickerFragmentListener;
-import direction123.calendar.ui.MonthViewPagerFragment;
 import direction123.calendar.utils.CalendarUtils;
 import direction123.calendar.utils.SyncUtils;
 
@@ -58,7 +42,7 @@ import direction123.calendar.utils.SyncUtils;
 
 
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener,
+public class MainActivity extends AppCompatActivity implements
         android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor>,
         DatePickerFragmentListener {
     //DrawLayout, Navigation Drawer
@@ -83,6 +67,14 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     @BindView(R.id.grid_view_main)
     GridView mGridView;
 
+    //bottom display
+    @BindView(R.id.disp_year)
+    TextView mDispYearView;
+    @BindView(R.id.disp_long)
+    TextView mDsipLongView;
+    @BindView(R.id.disp_fortune)
+    TextView mDispFortuneView;
+
     // language preferences
     private String mLangPref;
 
@@ -91,9 +83,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private FirebaseAnalytics mFirebaseAnalytics;
 
     private int mSelectedMonthIndex;
-
-    private MonthViewPagerAdapter mMonthViewPagerAdapter;
-    GestureDetector gestureDetector;
 
     private static final String ARG_POSITION = "position";
     private static final int ID_MONTH_DAYS_LOADER = 35;
@@ -142,6 +131,17 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         //grid view
         mDaysGridAdapter = new DaysGridAdapter(this);
         mGridView.setAdapter(mDaysGridAdapter);
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                DayModel dayModel = (DayModel) mDaysGridAdapter.getItem(position);
+                mDispYearView.setText(dayModel.getDispYear(mLangPref));
+                mDsipLongView.setText(dayModel.getDispLong(mLangPref));
+                mDispFortuneView.setText(dayModel.getFortune(mLangPref));
+            }
+        });
+        mDaysGridAdapter.setDate(getYear(), getMonth());
+        mDaysGridAdapter.notifyDataSetChanged();
 
         // Loader
         getSupportLoaderManager().initLoader(ID_MONTH_DAYS_LOADER, null, this);
@@ -151,21 +151,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        Log.d(DEBUG_TAG, "onTouch: ");
-        gestureDetector.onTouchEvent(event);
-        return true;
-    }
-
-    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case ID_MONTH_DAYS_LOADER:
-                Log.v("xx create loader d", getYear() + ", " + getMonth());
-
                 Uri getAllDaysUri = MonthContract.MonthEntry
                         .buildMonthUriWithYearMonth(getYear(), getMonth());
-                Log.v("xx create loader", getAllDaysUri.toString());
                 return new CursorLoader(this,
                         getAllDaysUri,
                         null,
@@ -180,8 +170,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
             case ID_MONTH_DAYS_LOADER: {
-                Log.v("xxxx onLoadFinished", (data == null) + ":" );
-
                 mDaysGridAdapter.swapCursor(data);
                 break;
             }
@@ -255,11 +243,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             @Override
             public void onClick(View v) {
                 mSelectedMonthIndex++;
-                Log.v("xxdd", mSelectedMonthIndex + "");
-
                 if(mSelectedMonthIndex <= MONTH_COUNT) {
                     getSupportLoaderManager().restartLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
                     setToolBarTitle();
+                    mDaysGridAdapter.setDate(getYear(), getMonth());
+                    mDaysGridAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -267,10 +255,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             @Override
             public void onClick(View v) {
                 mSelectedMonthIndex--;
-                Log.v("xxdd", mSelectedMonthIndex + "");
                 if(mSelectedMonthIndex > 0) {
                     getSupportLoaderManager().restartLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
                     setToolBarTitle();
+                    mDaysGridAdapter.setDate(getYear(), getMonth());
+                    mDaysGridAdapter.notifyDataSetChanged();
                 }
             }
         });

@@ -12,29 +12,30 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import direction123.calendar.R;
 import direction123.calendar.data.DayModel;
+import direction123.calendar.utils.GridBackground;
 
 /**
  * Created by fangxiangwang on 11/15/17.
  */
 
 public class DaysGridAdapter extends BaseAdapter{
-    private static final int DAYS_LENGTH = 42;
-
     private LayoutInflater mInflater;
 
     private Context mContext;
+
     private Cursor mCursor;
     private List<DayModel> mDayModels = new ArrayList<>();
+    private int mSelectedYear;
+    private int mSelectedMonth;
 
     private String mLangPref;
 
     public void swapCursor(Cursor newCursor) {
-       // Log.v("xxxx swapCursor", mCursor.getCount() + "");
-
         mCursor = newCursor;
         buildDayModels();
         notifyDataSetChanged();
@@ -54,6 +55,11 @@ public class DaysGridAdapter extends BaseAdapter{
         return mDayModels.size();
     }
 
+    public void setDate(int year, int month) {
+        mSelectedYear = year;
+        mSelectedMonth = month;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
@@ -68,10 +74,30 @@ public class DaysGridAdapter extends BaseAdapter{
         dayLunarTextView = (TextView) view.findViewById(R.id.day_lunar);
         if (mDayModels != null && position >= 0 && position < getCount() && mDayModels.get(position) != null) {
             DayModel dayModel = mDayModels.get(position);
-          //  Log.v("xxx dayModel", dayModel.getDispTop());
-
             dayTextView.setText(dayModel.getDispTop());
             dayLunarTextView.setText(dayModel.getDispShort(mLangPref));
+        } else {
+            dayTextView.setText("");
+            dayLunarTextView.setText("");
+        }
+
+        GridBackground gridBackground = new GridBackground(mContext);
+        Calendar c = Calendar.getInstance();
+        int curYear = c.get(Calendar.YEAR);
+        int curMonth = c.get(Calendar.MONTH) + 1;
+        int curDay = c.get(Calendar.DAY_OF_MONTH);
+        if(mSelectedYear == curYear && mSelectedMonth == curMonth) {
+            if(position == (curDay + getFirstDayIndex() - 1)) {
+                gridBackground.setPrimaryColorBackground(view);
+            } else {
+                gridBackground.setNoSelectedBackground(view);
+            }
+        } else {
+            if (position == getFirstDayIndex()) {
+                gridBackground.setPrimaryColorBorder(view);
+            } else {
+                gridBackground.setNoSelectedBackground(view);
+            }
         }
         return view;
     }
@@ -91,7 +117,6 @@ public class DaysGridAdapter extends BaseAdapter{
 
     private void buildDayModels() {
         mDayModels = new ArrayList<>();
-        Log.v("xxxx buildDayModels", mCursor.getCount() + "");
         if(mCursor != null && mCursor.moveToFirst() ) {
             while (!mCursor.isAfterLast()) {
                 String daysInMonth = mCursor.getString(mCursor.getColumnIndex("DaysInMonth"));
@@ -116,5 +141,16 @@ public class DaysGridAdapter extends BaseAdapter{
                 mCursor.moveToNext();
             }
         }
+    }
+
+    public int getFirstDayIndex() {
+        if(mDayModels != null) {
+            int start = 0;
+            while (mDayModels.get(start) == null) {
+                start++;
+            }
+            return start;
+        }
+        return -1;
     }
 }
