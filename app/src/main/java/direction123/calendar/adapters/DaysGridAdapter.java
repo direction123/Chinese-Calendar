@@ -146,7 +146,7 @@ public class DaysGridAdapter extends BaseAdapter{
     }
 
     public int getFirstDayIndex() {
-        if(mDayModels != null) {
+        if(mDayModels != null && mDayModels.size() != 0) {
             int start = 0;
             while (mDayModels.get(start) == null) {
                 start++;

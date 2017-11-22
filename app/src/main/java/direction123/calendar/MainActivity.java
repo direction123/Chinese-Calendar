@@ -150,41 +150,41 @@ public class MainActivity extends AppCompatActivity implements
                     mDispYearView.setText(dayModel.getDispYear(mLangPref));
                     mDsipLongView.setText(dayModel.getDispLong(mLangPref));
                     mDispFortuneView.setText(dayModel.getFortune(mLangPref));
-                }
 
-                GridBackground gridBackground = new GridBackground(getApplicationContext());
-                List<DayModel> dayModels = mDaysGridAdapter.getDayModel();
-                int firstDay = mDaysGridAdapter.getFirstDayIndex();
-                if (isCurrentMonth()) {
-                    if (position == (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + firstDay - 1)) {
-                        if(dayModels != null) {
-                            for (int i = 0; i < dayModels.size(); i++) {
-                                if (i != (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + firstDay - 1)) {
-                                    gridBackground.setNoSelectedBackground(mGridView.getChildAt(i));
+                    GridBackground gridBackground = new GridBackground(getApplicationContext());
+                    List<DayModel> dayModels = mDaysGridAdapter.getDayModel();
+                    int firstDay = mDaysGridAdapter.getFirstDayIndex();
+                    if (isCurrentMonth()) {
+                        if (position == (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + firstDay - 1)) {
+                            if(dayModels != null) {
+                                for (int i = 0; i < dayModels.size(); i++) {
+                                    if (i != (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + firstDay - 1)) {
+                                        gridBackground.setNoSelectedBackground(mGridView.getChildAt(i));
+                                    }
                                 }
                             }
+                            gridBackground.setPrimaryColorBackground(view);
+                        } else {
+                            if(dayModels != null) {
+                                for (int i = 0; i < dayModels.size(); i++) {
+                                    if (i == (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + firstDay - 1)) {
+                                        gridBackground.setGreyColorBackground(mGridView.getChildAt(i));
+                                    } else {
+                                        gridBackground.setNoSelectedBackground(mGridView.getChildAt(i));
+                                    }
+                                }
+                            }
+                            gridBackground.setPrimaryColorBorder(view);
                         }
-                        gridBackground.setPrimaryColorBackground(view);
                     } else {
                         if(dayModels != null) {
                             for (int i = 0; i < dayModels.size(); i++) {
-                                if (i == (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + firstDay - 1)) {
-                                    gridBackground.setGreyColorBackground(mGridView.getChildAt(i));
-                                } else {
+                                if (i != position) {
                                     gridBackground.setNoSelectedBackground(mGridView.getChildAt(i));
                                 }
                             }
+                            gridBackground.setPrimaryColorBorder(view);
                         }
-                        gridBackground.setPrimaryColorBorder(view);
-                    }
-                } else {
-                    if(dayModels != null) {
-                        for (int i = 0; i < dayModels.size(); i++) {
-                            if (i != position) {
-                                gridBackground.setNoSelectedBackground(mGridView.getChildAt(i));
-                            }
-                        }
-                        gridBackground.setPrimaryColorBorder(view);
                     }
                 }
             }
@@ -192,6 +192,9 @@ public class MainActivity extends AppCompatActivity implements
 
         // Loader
         getSupportLoaderManager().initLoader(ID_MONTH_DAYS_LOADER, null, this);
+
+        // init UI
+        updateUI();
 
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -393,7 +396,12 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onDateSet(int year, int month, int day) {
-
+        mSelectedYear = year;
+        mSelectedMonth = month + 1;
+        mSelectedDay = day;
+        mSelectedMonthIndex = (mSelectedYear - 1901)*12 + mSelectedMonth;
+        Log.v("dddd", ": " + mSelectedYear + ": " + mSelectedMonth + ": " + mSelectedDay);
+        getSupportLoaderManager().restartLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
     }
 
 }
