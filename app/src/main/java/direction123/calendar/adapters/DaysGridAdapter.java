@@ -90,12 +90,18 @@ public class DaysGridAdapter extends BaseAdapter{
         int curDay = c.get(Calendar.DAY_OF_MONTH);
         if(mSelectedYear == curYear && mSelectedMonth == curMonth) {
             if(position == (curDay + getFirstDayIndex() - 1)) {
-                gridBackground.setPrimaryColorBackground(view);
+                if(mSelectedDay != curDay) {
+                    gridBackground.setGreyColorBackground(view);
+                } else {
+                    gridBackground.setPrimaryColorBackground(view);
+                }
+            } else if(position == (mSelectedDay + getFirstDayIndex() - 1)) {
+                gridBackground.setPrimaryColorBorder(view);
             } else {
                 gridBackground.setNoSelectedBackground(view);
             }
         } else {
-            if (position == getFirstDayIndex()) {
+            if(position == (mSelectedDay + getFirstDayIndex() - 1)) {
                 gridBackground.setPrimaryColorBorder(view);
             } else {
                 gridBackground.setNoSelectedBackground(view);
