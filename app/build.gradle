@@ -2,10 +2,10 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
-        config {
+        release {
             keyAlias 'ChineseCalendarKey'
             keyPassword 'DDxxcoding123'
-            storeFile file('/Users/fangxiangwang/Sites/ChineseCalendar/chinese-calendar-android/chinesecalendar.jks')
+            storeFile file('chinesecalendar.jks')
             storePassword 'DDxxcoding123'
         }
     }
@@ -21,9 +21,9 @@ android {
     }
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
         }
     }
 }
