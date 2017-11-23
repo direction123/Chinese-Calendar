@@ -9,4 +9,9 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
+    <style name="NavigationViewStyle">
+        <item name="android:textSize">15sp</item> <!-- menu item text size-->
+        <item name="android:listPreferredItemHeightSmall">40dp</item><!-- menu item height-->
+    </style>
+
 </resources>

@@ -41,6 +41,8 @@ public class SettingsActivity extends AppCompatActivity {
         fragmentManager.beginTransaction()
                 .replace(R.id.settings_fragment, new SettingsFragment())
                 .commit();
+
+        updateUI();
     }
 
     public void updateUI() {

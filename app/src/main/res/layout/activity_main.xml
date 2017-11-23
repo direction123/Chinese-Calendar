@@ -211,6 +211,7 @@
 
     <!-- The navigation drawer -->
     <android.support.design.widget.NavigationView
+        app:theme="@style/NavigationViewStyle"
         android:id="@+id/drawer_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
