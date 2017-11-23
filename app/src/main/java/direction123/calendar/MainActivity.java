@@ -349,9 +349,9 @@ public class MainActivity extends AppCompatActivity implements
         // updateUI
         updateUI();
         // close drawerlayout
-        if(mDrawerLayout.isDrawerOpen(mDrawerView)) {
+        /*if(mDrawerLayout.isDrawerOpen(mDrawerView)) {
             mDrawerLayout.closeDrawer(mDrawerView);
-        }
+        } */
     }
 
     @Override
@@ -399,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements
                 break;
         }
         // Close the navigation drawer
-        mDrawerLayout.closeDrawers();
+        // mDrawerLayout.closeDrawers();
     }
 
     public void showDatePickerDialog() {
