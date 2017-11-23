@@ -98,9 +98,7 @@ public class CalendarProvider extends ContentProvider {
                 String queryString =
                         "SELECT * FROM Month LEFT JOIN Days ON Month.DaysInMonth = Days.DayId" +
                                 " WHERE Month.Year = " + year +" AND Month.Month = " + month;
-                Log.v("xxx provider", queryString);
                 cursor = mOpenHelper.getReadableDatabase().rawQuery(queryString, null);
-                Log.v("xx cursor", (cursor == null) + "");
                 break;
             }
             default:

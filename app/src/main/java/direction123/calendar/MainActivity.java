@@ -353,15 +353,6 @@ public class MainActivity extends AppCompatActivity implements
             settingItem.setTitle(getResources().getString(R.string.setting_menu_en));
             aboutItem.setTitle(getResources().getString(R.string.about_menu_en));
         }
-        // load quote
-        Log.v("xxxxxx3", mLangPref);
-        Log.v("xxxxxx4", getString(R.string.pref_language_en_value));
-        Log.v("xxxxxx42", getString(R.string.pref_language_ch_value));
-
-        if (mLangPref.equals(getResources().getString(R.string.pref_language_en_value))) {
-            Log.v("xxxxxx5", "dddddd");
-            //  new FetchQuoteTask().execute();
-        }
     }
 
 
@@ -376,7 +367,6 @@ public class MainActivity extends AppCompatActivity implements
         // updateUI
         updateUI();
         if (mLangPref.equals(getResources().getString(R.string.pref_language_en_value))) {
-            Log.v("xxxxxx55", "dddddd");
             new FetchQuoteTask().execute();
         }
         // close drawerlayout
@@ -461,8 +451,6 @@ public class MainActivity extends AppCompatActivity implements
         protected String doInBackground(String... params) {
             URL quoteOfDayUrl = NetworkUtils.buildQuoteOfDayUrl();
             try {
-                Log.v("xxxxx2", "loaddddd");
-
                 String quoteOfDayResponse = NetworkUtils.getResponseFromHttpUrl(quoteOfDayUrl);
                 return quoteOfDayResponse;
             } catch (IOException e) {
@@ -473,7 +461,6 @@ public class MainActivity extends AppCompatActivity implements
 
         @Override
         protected void onPostExecute(String quoteOfDayData) {
-            Log.v("xxxxx", quoteOfDayData);
             if (quoteOfDayData != null) {
                 try {
                     JSONObject quoteOfDayJson = new JSONObject(quoteOfDayData);
