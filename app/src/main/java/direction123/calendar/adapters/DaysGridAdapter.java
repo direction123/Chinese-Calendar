@@ -42,6 +42,13 @@ public class DaysGridAdapter extends BaseAdapter{
         notifyDataSetChanged();
     }
 
+    public void refreshUI() {
+        //language preference
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mLangPref = sharedPref.getString(mContext.getResources().getString(R.string.pref_lang_key), "");
+        notifyDataSetChanged();
+    }
+
     public DaysGridAdapter(Context context) {
         mContext = context;
         mInflater = (LayoutInflater) context

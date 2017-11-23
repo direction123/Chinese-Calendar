@@ -288,7 +288,11 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void updateUI() {
+    public void updateUI() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        mLangPref = sharedPref.getString(getResources().getString(R.string.pref_lang_key), "");
+        //day grid
+        mDaysGridAdapter.refreshUI();
         //toolbar title
         String toolBarTitle;
         Map<String, String> hashMap = new CalendarUtils().getMonthMapping();
@@ -322,6 +326,8 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        // updateUI
+        updateUI();
         // Draw Menu
         updateDrawerMenuTitles();
     }
@@ -400,7 +406,6 @@ public class MainActivity extends AppCompatActivity implements
         mSelectedMonth = month + 1;
         mSelectedDay = day;
         mSelectedMonthIndex = (mSelectedYear - 1901)*12 + mSelectedMonth;
-        Log.v("dddd", ": " + mSelectedYear + ": " + mSelectedMonth + ": " + mSelectedDay);
         getSupportLoaderManager().restartLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
     }
 
