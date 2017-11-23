@@ -3,10 +3,13 @@ package direction123.calendar;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +34,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import direction123.calendar.adapters.DayGridHeaderAdapter;
 import direction123.calendar.adapters.DaysGridAdapter;
 import direction123.calendar.data.DayModel;
 import direction123.calendar.data.MonthContract;
@@ -69,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements
     //days grid
     @BindView(R.id.grid_view_main)
     GridView mGridView;
+    @BindView(R.id.grid_view_header)
+    GridView mGridViewHeader;
 
     //bottom display
     @BindView(R.id.disp_year)
@@ -94,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final int ID_MONTH_DAYS_LOADER = 35;
     private static final int MONTH_COUNT = 2388;
     private DaysGridAdapter mDaysGridAdapter;
+    private DayGridHeaderAdapter mGridHeaderAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +145,9 @@ public class MainActivity extends AppCompatActivity implements
 
         //toolbar
         setupToolbar();
+        //grid view header
+        mGridHeaderAdapter = new DayGridHeaderAdapter(this);
+        mGridViewHeader.setAdapter(mGridHeaderAdapter);
 
         //grid view
         mDaysGridAdapter = new DaysGridAdapter(this);
@@ -293,6 +303,7 @@ public class MainActivity extends AppCompatActivity implements
         mLangPref = sharedPref.getString(getResources().getString(R.string.pref_lang_key), "");
         //day grid
         mDaysGridAdapter.refreshUI();
+        mGridHeaderAdapter.refreshUI();
         //toolbar title
         String toolBarTitle;
         Map<String, String> hashMap = new CalendarUtils().getMonthMapping();

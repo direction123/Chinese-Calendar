@@ -82,10 +82,21 @@
 
                     </LinearLayout >
 
-
-
                 </android.support.v7.widget.Toolbar>
             </android.support.v7.widget.CardView>
+
+            <GridView
+                android:id="@+id/grid_view_header"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:listSelector="@android:color/transparent"
+                android:numColumns="7"
+                android:horizontalSpacing="@dimen/padding_s"
+                android:verticalSpacing="@dimen/padding_s"
+                android:gravity="center"
+                android:stretchMode="columnWidth"
+                android:paddingTop="@dimen/padding_m"
+                android:paddingBottom="@dimen/padding_m"/>
 
         <GridView
             android:id="@+id/grid_view_main"

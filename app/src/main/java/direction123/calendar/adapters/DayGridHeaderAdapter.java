@@ -20,14 +20,27 @@ import direction123.calendar.data.DayModel;
 
 public class DayGridHeaderAdapter extends BaseAdapter {
     private String[] mDays;
+    private Context mContext;
     private LayoutInflater mInflater;
+
 
     public DayGridHeaderAdapter(Context context) {
         mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mContext = context;
+        buildDays();
+    }
+
+    public void refreshUI() {
         //language preference
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String langPref = sharedPref.getString(context.getResources().getString(R.string.pref_lang_key), "");
+        buildDays();
+        notifyDataSetChanged();
+    }
+
+    private void buildDays() {
+        //language preference
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String langPref = sharedPref.getString(mContext.getResources().getString(R.string.pref_lang_key), "");
         if (langPref.equals("Simplified Chinese")) {
             mDays = new String[]{"日","一","二","三","四","五","六"};
         } else {
