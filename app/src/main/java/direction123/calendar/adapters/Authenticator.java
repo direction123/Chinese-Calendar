@@ -11,6 +11,7 @@ import android.os.Bundle;
  * Created by fangxiangwang on 9/24/17.
  */
 
+//https://developer.android.com/training/sync-adapters/creating-authenticator.html
 /*
  * Implement AbstractAccountAuthenticator and stub out all
  * of its methods

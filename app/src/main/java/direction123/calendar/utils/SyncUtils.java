@@ -23,6 +23,7 @@ import direction123.calendar.services.GenericAccountService;
  * Created by fangxiangwang on 9/22/17.
  */
 
+//https://github.com/googlesamples/android-BasicSyncAdapter/blob/master/Application/src/main/java/com/example/android/basicsyncadapter/SyncUtils.java
 public class SyncUtils {
     private final static String TAG = "SyncUtils";
     private static final long SYNC_FREQUENCY = 60 * 60;  // in seconds

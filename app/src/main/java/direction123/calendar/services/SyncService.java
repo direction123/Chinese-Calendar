@@ -10,6 +10,7 @@ import android.os.IBinder;
 
 import direction123.calendar.adapters.SyncAdapter;
 
+//https://developer.android.com/training/sync-adapters/creating-sync-adapter.html
 /**
  * Define a Service that returns an IBinder for the
  * sync adapter class, allowing the sync adapter framework to call

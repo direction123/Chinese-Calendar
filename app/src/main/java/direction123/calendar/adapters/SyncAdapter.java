@@ -14,6 +14,7 @@ import android.util.Log;
  * Created by fangxiangwang on 9/24/17.
  */
 
+//https://developer.android.com/training/sync-adapters/creating-sync-adapter.html
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
     // Global variables
     // Define a variable to contain a content resolver instance
