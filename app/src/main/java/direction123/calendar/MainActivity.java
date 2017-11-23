@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -25,8 +26,15 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -41,6 +49,7 @@ import direction123.calendar.data.MonthContract;
 import direction123.calendar.interfaces.DatePickerFragmentListener;
 import direction123.calendar.utils.CalendarUtils;
 import direction123.calendar.utils.GridBackground;
+import direction123.calendar.utils.NetworkUtils;
 import direction123.calendar.utils.SyncUtils;
 
 /**
@@ -83,6 +92,13 @@ public class MainActivity extends AppCompatActivity implements
     TextView mDsipLongView;
     @BindView(R.id.disp_fortune)
     TextView mDispFortuneView;
+    @BindView(R.id.disp_quote)
+    TextView mDispQuoteView;
+    @BindView(R.id.disp_quote_author)
+    TextView mDispQuoteAuthorView;
+    @BindView(R.id.adView)
+    AdView mAdView;
+
 
     // language preferences
     private String mLangPref;
@@ -112,9 +128,10 @@ public class MainActivity extends AppCompatActivity implements
         mSelectedYear = Calendar.getInstance().get(Calendar.YEAR);
         mSelectedMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
         mSelectedDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-        mSelectedMonthIndex = (mSelectedYear - 1901)*12 + mSelectedMonth;
+        mSelectedMonthIndex = (mSelectedYear - 1901) * 12 + mSelectedMonth;
 
         //get language preference
+        PreferenceManager.setDefaultValues(this, R.xml.preference_settings, false);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         mLangPref = sharedPref.getString(getResources().getString(R.string.pref_lang_key), "");
 
@@ -155,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 DayModel dayModel = (DayModel) mDaysGridAdapter.getItem(position);
-                if(dayModel != null) {
+                if (dayModel != null) {
                     mDispYearView.setText(dayModel.getDispYear(mLangPref));
                     mDsipLongView.setText(dayModel.getDispLong(mLangPref));
                     mDispFortuneView.setText(dayModel.getFortune(mLangPref));
@@ -165,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements
                     int firstDay = mDaysGridAdapter.getFirstDayIndex();
                     if (isCurrentMonth()) {
                         if (position == (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + firstDay - 1)) {
-                            if(dayModels != null) {
+                            if (dayModels != null) {
                                 for (int i = 0; i < dayModels.size(); i++) {
                                     if (i != (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + firstDay - 1)) {
                                         gridBackground.setNoSelectedBackground(mGridView.getChildAt(i));
@@ -174,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements
                             }
                             gridBackground.setPrimaryColorBackground(view);
                         } else {
-                            if(dayModels != null) {
+                            if (dayModels != null) {
                                 for (int i = 0; i < dayModels.size(); i++) {
                                     if (i == (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + firstDay - 1)) {
                                         gridBackground.setGreyColorBackground(mGridView.getChildAt(i));
@@ -186,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements
                             gridBackground.setPrimaryColorBorder(view);
                         }
                     } else {
-                        if(dayModels != null) {
+                        if (dayModels != null) {
                             for (int i = 0; i < dayModels.size(); i++) {
                                 if (i != position) {
                                     gridBackground.setNoSelectedBackground(mGridView.getChildAt(i));
@@ -203,13 +220,13 @@ public class MainActivity extends AppCompatActivity implements
         getSupportLoaderManager().initLoader(ID_MONTH_DAYS_LOADER, null, this);
 
         // init UI
-        updateUI();
+        //updateUI();
 
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
-    private void setupToolbar(){
+    private void setupToolbar() {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -225,12 +242,12 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 mSelectedMonthIndex++;
-                mSelectedYear = (mSelectedMonthIndex - 1)/12 + 1901;
+                mSelectedYear = (mSelectedMonthIndex - 1) / 12 + 1901;
                 mSelectedMonth = mSelectedMonthIndex - 12 * (mSelectedYear - 1901);
-                if(!isCurrentMonth()) {
+                if (!isCurrentMonth()) {
                     mSelectedDay = 1;
                 }
-                if(mSelectedMonthIndex <= MONTH_COUNT) {
+                if (mSelectedMonthIndex <= MONTH_COUNT) {
                     getSupportLoaderManager().restartLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
                 }
             }
@@ -239,23 +256,23 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 mSelectedMonthIndex--;
-                mSelectedYear = (mSelectedMonthIndex - 1)/12 + 1901;
+                mSelectedYear = (mSelectedMonthIndex - 1) / 12 + 1901;
                 mSelectedMonth = mSelectedMonthIndex - 12 * (mSelectedYear - 1901);
-                if(!isCurrentMonth()) {
+                if (!isCurrentMonth()) {
                     mSelectedDay = 1;
                 }
-                if(mSelectedMonthIndex > 0) {
+                if (mSelectedMonthIndex > 0) {
                     getSupportLoaderManager().restartLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
                 }
             }
         });
-        mJumpToday.setOnClickListener(new View.OnClickListener(){
+        mJumpToday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSelectedYear = Calendar.getInstance().get(Calendar.YEAR);
                 mSelectedMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
                 mSelectedDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-                mSelectedMonthIndex = (mSelectedYear - 1901)*12 + mSelectedMonth;
+                mSelectedMonthIndex = (mSelectedYear - 1901) * 12 + mSelectedMonth;
                 getSupportLoaderManager().restartLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
             }
         });
@@ -315,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements
         //bottom text
         int position = mSelectedDay + mDaysGridAdapter.getFirstDayIndex() - 1;
         DayModel dayModel = (DayModel) mDaysGridAdapter.getItem(position);
-        if(dayModel != null) {
+        if (dayModel != null) {
             mDispYearView.setText(dayModel.getDispYear(mLangPref));
             mDsipLongView.setText(dayModel.getDispLong(mLangPref));
             mDispFortuneView.setText(dayModel.getFortune(mLangPref));
@@ -336,6 +353,15 @@ public class MainActivity extends AppCompatActivity implements
             settingItem.setTitle(getResources().getString(R.string.setting_menu_en));
             aboutItem.setTitle(getResources().getString(R.string.about_menu_en));
         }
+        // load quote
+        Log.v("xxxxxx3", mLangPref);
+        Log.v("xxxxxx4", getString(R.string.pref_language_en_value));
+        Log.v("xxxxxx42", getString(R.string.pref_language_ch_value));
+
+        if (mLangPref.equals(getResources().getString(R.string.pref_language_en_value))) {
+            Log.v("xxxxxx5", "dddddd");
+            //  new FetchQuoteTask().execute();
+        }
     }
 
 
@@ -343,11 +369,16 @@ public class MainActivity extends AppCompatActivity implements
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         // updateUI
         updateUI();
+        if (mLangPref.equals(getResources().getString(R.string.pref_language_en_value))) {
+            Log.v("xxxxxx55", "dddddd");
+            new FetchQuoteTask().execute();
+        }
         // close drawerlayout
         /*if(mDrawerLayout.isDrawerOpen(mDrawerView)) {
             mDrawerLayout.closeDrawer(mDrawerView);
@@ -388,7 +419,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
-        switch(menuItem.getItemId()) {
+        switch (menuItem.getItemId()) {
             case R.id.nav_setting_fragment:
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
@@ -412,10 +443,53 @@ public class MainActivity extends AppCompatActivity implements
         mSelectedYear = year;
         mSelectedMonth = month + 1;
         mSelectedDay = day;
-        mSelectedMonthIndex = (mSelectedYear - 1901)*12 + mSelectedMonth;
+        mSelectedMonthIndex = (mSelectedYear - 1901) * 12 + mSelectedMonth;
         getSupportLoaderManager().restartLoader(ID_MONTH_DAYS_LOADER, null, MainActivity.this);
     }
 
+    class FetchQuoteTask extends AsyncTask<String, Void, String> {
+
+        public FetchQuoteTask() {
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            URL quoteOfDayUrl = NetworkUtils.buildQuoteOfDayUrl();
+            try {
+                Log.v("xxxxx2", "loaddddd");
+
+                String quoteOfDayResponse = NetworkUtils.getResponseFromHttpUrl(quoteOfDayUrl);
+                return quoteOfDayResponse;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String quoteOfDayData) {
+            Log.v("xxxxx", quoteOfDayData);
+            if (quoteOfDayData != null) {
+                try {
+                    JSONObject quoteOfDayJson = new JSONObject(quoteOfDayData);
+                    if (quoteOfDayJson.getJSONObject("success") != null) {
+                        JSONArray quoteArray = quoteOfDayJson.getJSONObject("contents")
+                                .getJSONArray("quotes");
+                        mDispQuoteView.setText(quoteArray.getJSONObject(0).getString("quote"));
+                        mDispQuoteAuthorView.setText("---- " + quoteArray.getJSONObject(0).getString("author"));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
 }
 
 
