@@ -141,7 +141,6 @@ public class MainActivity extends AppCompatActivity implements
             }
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
-        updateDrawerMenuTitles();
 
         //toolbar
         setupToolbar();
@@ -327,6 +326,16 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             mJumpToday.setVisibility(View.VISIBLE);
         }
+        //update menu item
+        MenuItem settingItem = mDrawerView.getMenu().findItem(R.id.nav_setting_fragment);
+        MenuItem aboutItem = mDrawerView.getMenu().findItem(R.id.nav_about_fragment);
+        if (mLangPref.equals(getResources().getString(R.string.pref_language_ch_value))) {
+            settingItem.setTitle(getResources().getString(R.string.setting_menu_ch));
+            aboutItem.setTitle(getResources().getString(R.string.about_menu_ch));
+        } else {
+            settingItem.setTitle(getResources().getString(R.string.setting_menu_en));
+            aboutItem.setTitle(getResources().getString(R.string.about_menu_en));
+        }
     }
 
 
@@ -339,8 +348,10 @@ public class MainActivity extends AppCompatActivity implements
         super.onResume();
         // updateUI
         updateUI();
-        // Draw Menu
-        updateDrawerMenuTitles();
+        // close drawerlayout
+        if(mDrawerLayout.isDrawerOpen(mDrawerView)) {
+            mDrawerLayout.closeDrawer(mDrawerView);
+        }
     }
 
     @Override
@@ -352,21 +363,6 @@ public class MainActivity extends AppCompatActivity implements
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
-    }
-
-    private void updateDrawerMenuTitles() {
-        MenuItem settingItem = mDrawerView.getMenu().findItem(R.id.nav_setting_fragment);
-        MenuItem aboutItem = mDrawerView.getMenu().findItem(R.id.nav_about_fragment);
-
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String langPref = sharedPref.getString(getResources().getString(R.string.pref_lang_key), "");
-        if (langPref.equals(getResources().getString(R.string.pref_language_ch_value))) {
-            settingItem.setTitle(getResources().getString(R.string.setting_menu_ch));
-            aboutItem.setTitle(getResources().getString(R.string.about_menu_ch));
-        } else {
-            settingItem.setTitle(getResources().getString(R.string.setting_menu_en));
-            aboutItem.setTitle(getResources().getString(R.string.about_menu_en));
-        }
     }
 
     /**
