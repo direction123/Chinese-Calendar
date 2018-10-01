@@ -26,9 +26,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.json.JSONArray;
@@ -98,8 +95,6 @@ public class MainActivity extends AppCompatActivity implements
     TextView mDispQuoteView;
     @BindView(R.id.disp_quote_author)
     TextView mDispQuoteAuthorView;
-    @BindView(R.id.adView)
-    AdView mAdView;
 
 
     // language preferences
@@ -220,12 +215,6 @@ public class MainActivity extends AppCompatActivity implements
 
         // Loader
         getSupportLoaderManager().initLoader(ID_MONTH_DAYS_LOADER, null, this);
-
-        // load ad
-        MobileAds.initialize(this,
-                "ca-app-pub-6007220938739284~8216600940");
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
 
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
